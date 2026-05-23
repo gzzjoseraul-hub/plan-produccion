@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Plan Producción</title>
 
+<!-- ✅ LIBRERÍAS BIEN (ARREGLADAS) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -13,11 +14,13 @@
 body { font-family: Arial; margin:20px; background:#f5f5f5; }
 h1 { color:#b00000; }
 
+/* COLORES */
 .urgente { background:#ff0000 !important; color:white; }
 .consolidada { background:#00b4ff !important; color:white; }
 .avance { background:#ffff00 !important; }
 .embarque { background:#ff6a00 !important; color:white; }
 
+/* TIEMPO */
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
@@ -30,6 +33,8 @@ h1 { color:#b00000; }
 <h1>📊 Plan de Producción</h1>
 
 <input type="file" id="upload">
+
+<br><br>
 
 <div>
 Total $: <span id="totalMonto">$0</span> |
@@ -57,7 +62,7 @@ Afectadas: <span id="totalAfectadas">0</span>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore, doc, collection, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSy...",
@@ -71,29 +76,45 @@ let cacheEstado = {};
 let cacheComentarios = {};
 let cacheAfectacion = {};
 
-// ✅ CALC TIEMPO
-function calcTiempo(r){
-    let hoy=new Date().toISOString().split("T")[0];
-    if(r<hoy) return "overdue";
-    if(r===hoy) return "servicio";
-    return "entiempo";
-}
-
 // ✅ FORMATO
 function money(v){
     return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
 }
 
-// ✅ ESCUCHA DATA GLOBAL (EXCEL)
+// ✅ TIEMPO
+function calcTiempo(r){
+    let hoy=new Date().toISOString().split("T")[0];
+    if(!r) return "";
+    if(r<hoy) return "overdue";
+    if(r===hoy) return "servicio";
+    return "entiempo";
+}
+
+//////////////////////////////////////////////////////
+// ✅ 1. DATA GLOBAL (EXCEL)
+//////////////////////////////////////////////////////
+
 onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
+
     if(docSnap.exists()){
         let data = docSnap.data().data;
-        renderTable(data);
+
+        if(data && data.length > 0){
+            renderTable(data);
+        }
     }
 });
 
-// ✅ ESCUCHA COMENTARIOS / ESTADO / AFECTACION
+//////////////////////////////////////////////////////
+// ✅ 2. DATOS POR USUARIO (ESTADO, AFECTACION, COMENTARIO)
+//////////////////////////////////////////////////////
+
 onSnapshot(collection(db,"comentarios"), snap=>{
+
+    cacheEstado = {};
+    cacheComentarios = {};
+    cacheAfectacion = {};
+
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
         cacheEstado[d.id]=d.data().estado||"";
@@ -103,7 +124,10 @@ onSnapshot(collection(db,"comentarios"), snap=>{
     aplicarDatos();
 });
 
+//////////////////////////////////////////////////////
 // ✅ RENDER
+//////////////////////////////////////////////////////
+
 function renderTable(data){
 
     let html="";
@@ -116,7 +140,7 @@ function renderTable(data){
         let t=calcTiempo(rdd);
 
         html+=`
-<tr data-id="${id}" data-monto="${monto}" class="${t}">
+<tr data-id="${id}" data-monto="${monto}" data-tiempo="${t}" class="${t}">
 <td>${id}</td>
 <td>${money(monto)}</td>
 <td>${rdd}</td>
@@ -146,11 +170,23 @@ function renderTable(data){
 
     $("#tabla tbody").html(html);
 
-    aplicarDatos(); ✅ 🔥 CRÍTICO
+    aplicarDatos(); ✅
     calcularKPIs();
+
+    if($.fn.DataTable.isDataTable('#tabla')){
+        $('#tabla').DataTable().destroy();
+    }
+
+    $('#tabla').DataTable({
+        paging:false,
+        info:false
+    });
 }
 
-// ✅ APLICA ESTADO / AFECTACION / COMENTARIO
+//////////////////////////////////////////////////////
+// ✅ APLICAR DATOS GUARDADOS
+//////////////////////////////////////////////////////
+
 function aplicarDatos(){
 
     Object.keys(cacheComentarios).forEach(id=>{
@@ -174,11 +210,13 @@ function aplicarDatos(){
     });
 }
 
-// ✅ GUARDAR COMENTARIO
+//////////////////////////////////////////////////////
+// ✅ GUARDAR CAMBIOS
+//////////////////////////////////////////////////////
+
 $(document).on("change",".comment-box", async function(){
 
     let id=$(this).data("id");
-
     cacheComentarios[id]=this.value;
 
     await setDoc(doc(db,"comentarios",id.toString()),{
@@ -188,11 +226,9 @@ $(document).on("change",".comment-box", async function(){
     });
 });
 
-// ✅ GUARDAR ESTADO
 $(document).on("change",".estado", async function(){
 
     let id=$(this).data("id");
-
     cacheEstado[id]=this.value;
 
     await setDoc(doc(db,"comentarios",id.toString()),{
@@ -204,11 +240,9 @@ $(document).on("change",".estado", async function(){
     aplicarDatos();
 });
 
-// ✅ GUARDAR AFECTACION
 $(document).on("change",".afectacion", async function(){
 
     let id=$(this).data("id");
-
     cacheAfectacion[id]=this.value;
 
     await setDoc(doc(db,"comentarios",id.toString()),{
@@ -220,7 +254,10 @@ $(document).on("change",".afectacion", async function(){
     calcularKPIs();
 });
 
-// ✅ SUBIR EXCEL → FIREBASE GLOBAL
+//////////////////////////////////////////////////////
+// ✅ SUBIR EXCEL
+//////////////////////////////////////////////////////
+
 $("#upload").on("change",function(e){
 
     let reader=new FileReader();
@@ -234,13 +271,16 @@ $("#upload").on("change",function(e){
             data: json
         });
 
-        alert("✅ Excel cargado para todos");
+        alert("✅ Datos cargados para todos");
     };
 
     reader.readAsArrayBuffer(e.target.files[0]);
 });
 
+//////////////////////////////////////////////////////
 // ✅ KPI
+//////////////////////////////////////////////////////
+
 function calcularKPIs(){
 
     let total=0, overdue=0, c=0, afectadas=0;
@@ -248,7 +288,7 @@ function calcularKPIs(){
     $("#tabla tbody tr").each(function(){
 
         let monto=parseFloat($(this).data("monto"))||0;
-        let t=$(this).attr("class");
+        let t=$(this).data("tiempo");
 
         total+=monto;
         if(t==="overdue") overdue+=monto;
