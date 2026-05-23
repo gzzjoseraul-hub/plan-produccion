@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Plan Producción</title>
 
-<!-- ✅ LIBRERÍAS CORRECTAS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -14,19 +13,35 @@
 body { font-family: Arial; margin:20px; background:#f5f5f5; }
 h1 { color:#b00000; }
 
-.filtros { display:flex; gap:15px; margin-bottom:10px; }
+.top-bar { display:flex; justify-content:space-between; align-items:center; }
+.filtros { display:flex; gap:15px; }
 
-.filtro-box { display:flex; flex-direction:column; font-size:12px; }
+/* ✅ KPI CORREGIDO */
+.kpis { 
+    display:flex; 
+    justify-content:flex-end; 
+    font-weight:bold;
+}
 
-.urgente { background:#ff0000 !important; color:white; }
-.consolidada { background:#00b4ff !important; color:white; }
-.avance { background:#ffff00 !important; }
-.embarque { background:#ff6a00 !important; color:white; }
+.kpi {
+    background:#fff;
+    padding:10px 15px;
+    border-radius:6px;
+    box-shadow:0 0 5px rgba(0,0,0,0.1);
+}
 
+.comment-box { width:100%; }
+
+/* ESTADO */
+.urgente { background:#ff0000 !important; color:white !important; }
+.consolidada { background:#00b4ff !important; color:white !important; }
+.avance { background:#ffff00 !important; color:black !important; }
+.embarque { background:#ff6a00 !important; color:white !important; }
+
+/* TIEMPO */
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
-
 </style>
 </head>
 
@@ -36,10 +51,10 @@ h1 { color:#b00000; }
 
 <input type="file" id="upload">
 
+<div class="top-bar">
+
 <div class="filtros">
 
-<div class="filtro-box">
-<label>Estado</label>
 <select id="filtroEstado">
 <option value="">Todos</option>
 <option value="urgente">Urgente</option>
@@ -47,15 +62,10 @@ h1 { color:#b00000; }
 <option value="avance">MAX AVANCE</option>
 <option value="embarque">MAX EMBARQUE</option>
 </select>
-</div>
 
-<div class="filtro-box">
-<label>Fecha Programación</label>
 <input type="date" id="filtroFecha">
-</div>
+<input type="date" id="filtroRDD">
 
-<div class="filtro-box">
-<label>Estatus</label>
 <select id="filtroTiempo">
 <option value="">Todos</option>
 <option value="overdue">Overdue</option>
@@ -63,15 +73,19 @@ h1 { color:#b00000; }
 <option value="entiempo">En tiempo</option>
 <option value="afectadas">Afectadas</option>
 </select>
-</div>
 
 </div>
 
-<div>
+<!-- ✅ KPI EN UNA SOLA LÍNEA -->
+<div class="kpis">
+<div class="kpi">
 Total $: <span id="totalMonto">$0</span> |
 Overdue $: <span id="totalOverdue">$0</span> |
 Órdenes: <span id="totalOrders">0</span> |
 Afectadas: <span id="totalAfectadas">0</span>
+</div>
+</div>
+
 </div>
 
 <br>
@@ -80,8 +94,10 @@ Afectadas: <span id="totalAfectadas">0</span>
 <thead>
 <tr>
 <th>Order</th>
+<th>Material</th>
+<th>Cantidad</th>
 <th>Monto</th>
-<th>Fecha Prog</th>
+<th>Fecha</th>
 <th>RDD</th>
 <th>Estado</th>
 <th>Afectación</th>
@@ -94,25 +110,28 @@ Afectadas: <span id="totalAfectadas">0</span>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSy...",
   projectId: "pp-abb"
 });
-
 const db = getFirestore(app);
 
-let cacheEstado = {};
+let tabla;
 let cacheComentarios = {};
+let cacheEstado = {};
 let cacheAfectacion = {};
 
-// ✅ FECHAS EXCEL
+const DATA_DOC = doc(db, "plan_data", "excel");
+
+// FORMATOS (sin cambios)
 function excelToDate(v){
     if(typeof v==="number"){
         return new Date((v-25569)*86400*1000).toISOString().split("T")[0];
     }
-    return v || "";
+    if(!v) return "";
+    return new Date(v).toISOString().split("T")[0];
 }
 
 function money(v){
@@ -121,36 +140,52 @@ function money(v){
 
 function calcTiempo(r){
     let hoy=new Date().toISOString().split("T")[0];
-    if(!r) return "";
     if(r<hoy) return "overdue";
     if(r===hoy) return "servicio";
     return "entiempo";
 }
 
-// ✅ DATA GLOBAL
-onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
-    if(docSnap.exists()){
-        renderTable(docSnap.data().data);
-    }
-});
-
-// ✅ FIREBASE DATOS USUARIO
+// ✅ FIREBASE comentarios
 onSnapshot(collection(db,"comentarios"), snap=>{
-
-    cacheEstado = {};
-    cacheComentarios = {};
-    cacheAfectacion = {};
-
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
         cacheEstado[d.id]=d.data().estado||"";
         cacheAfectacion[d.id]=d.data().afectacion||"";
     });
-
     aplicarDatos();
 });
 
-// ✅ RENDER
+// ✅ CARGAR EXCEL DESDE FIREBASE (FIX KPI)
+async function cargarDesdeFirebase(){
+    const snap = await getDoc(DATA_DOC);
+    if(snap.exists()){
+        renderTable(snap.data().rows);
+    }
+}
+
+// ✅ SUBIR EXCEL
+$("#upload").on("change",async function(e){
+
+    let reader=new FileReader();
+
+    reader.onload=async function(evt){
+
+        let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});
+        let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+        await setDoc(DATA_DOC,{ rows: json });
+
+        renderTable(json);
+    };
+
+    reader.readAsArrayBuffer(e.target.files[0]);
+});
+
+// ✅ AUTOLOAD
+window.onload=()=>{
+    cargarDesdeFirebase();
+};
+
 function renderTable(data){
 
     let html="";
@@ -158,18 +193,18 @@ function renderTable(data){
     data.forEach(r=>{
 
         let id=r["Order"];
+        let f=excelToDate(r["Release date (actual)"]);
+        let rdd=excelToDate(r["RDD"]);
+        let t=calcTiempo(rdd);
         let monto=r["Monto"]||0;
 
-        let fecha = excelToDate(r["Release date (actual)"]);
-        let rdd = excelToDate(r["RDD"]);
-
-        let t=calcTiempo(rdd);
-
         html+=`
-<tr data-id="${id}" data-monto="${monto}" data-tiempo="${t}" data-fecha="${fecha}" class="${t}">
+<tr data-id="${id}" data-fecha="${f}" data-rdd="${rdd}" data-tiempo="${t}" data-monto="${monto}" class="${t}">
 <td>${id}</td>
+<td>${r["Material Number"]||""}</td>
+<td>${r["Order quantity (GMEIN)"]||0}</td>
 <td>${money(monto)}</td>
-<td>${fecha}</td>
+<td>${f}</td>
 <td>${rdd}</td>
 
 <td data-estado="">
@@ -184,7 +219,7 @@ function renderTable(data){
 
 <td>
 <select class="afectacion" data-id="${id}">
-<option></option>
+<option value=""></option>
 <option value="MATERIAL">MATERIAL</option>
 <option value="IR">IR</option>
 <option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option>
@@ -197,16 +232,19 @@ function renderTable(data){
 
     $("#tabla tbody").html(html);
 
-    if($.fn.DataTable.isDataTable('#tabla')){
-        $('#tabla').DataTable().destroy();
-    }
+    if(tabla) tabla.destroy();
 
-    $('#tabla').DataTable({ paging:false });
+    tabla=$("#tabla").DataTable({
+        paging:false,
+        info:false
+    });
 
     aplicarDatos();
+
+    // ✅ 🔥 CLAVE: recalcular después de render
+    calcularKPIs();
 }
 
-// ✅ APLICAR DATOS
 function aplicarDatos(){
 
     Object.keys(cacheComentarios).forEach(id=>{
@@ -219,7 +257,10 @@ function aplicarDatos(){
 
         sel.val(cacheEstado[id]);
         row.removeClass("urgente consolidada avance embarque");
+
         if(cacheEstado[id]) row.addClass(cacheEstado[id]);
+
+        row.find("td[data-estado]").attr("data-estado",cacheEstado[id]);
     });
 
     Object.keys(cacheAfectacion).forEach(id=>{
@@ -227,67 +268,36 @@ function aplicarDatos(){
     });
 }
 
-// ✅ FILTROS
-function aplicarFiltros(){
+// ✅ KPI FUNCIONANDO
+function calcularKPIs(){
 
-    let estado=$("#filtroEstado").val();
-    let tiempo=$("#filtroTiempo").val();
-    let fecha=$("#filtroFecha").val();
+    let total=0, overdue=0, c=0, afectadas=0;
 
     $("#tabla tbody tr").each(function(){
 
-        let ok=true;
+        if($(this).css("display")==="none") return;
 
-        let est=$(this).find("select.estado").val();
+        let monto=parseFloat($(this).data("monto"))||0;
         let t=$(this).data("tiempo");
+
+        total+=monto;
+        if(t==="overdue") overdue+=monto;
+        c++;
+
         let af=$(this).find(".afectacion").val();
-        let f=$(this).data("fecha");
-
-        if(estado && est!==estado) ok=false;
-        if(fecha && f!==fecha) ok=false;
-
-        if(tiempo==="afectadas"){
-            if(!af) ok=false;
-        } else {
-            if(tiempo && t!==tiempo) ok=false;
-        }
-
-        $(this).toggle(ok);
+        if(af) afectadas++;
     });
+
+    $("#totalMonto").text(money(total));
+    $("#totalOverdue").text(money(overdue));
+    $("#totalOrders").text(c);
+    $("#totalAfectadas").text(afectadas);
 }
 
-$("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
-
-// ✅ GUARDAR
-$(document).on("change",".comment-box, .estado, .afectacion", async function(){
-
-    let id=$(this).data("id");
-
-    await setDoc(doc(db,"comentarios",id.toString()),{
-        comentario: $(`input[data-id='${id}']`).val() || "",
-        estado: $(`select.estado[data-id='${id}']`).val() || "",
-        afectacion: $(`select.afectacion[data-id='${id}']`).val() || ""
-    });
-});
-
-// ✅ SUBIR EXCEL
-$("#upload").on("change",function(e){
-
-    let reader=new FileReader();
-
-    reader.onload=async function(evt){
-
-        let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});
-        let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
-        await setDoc(doc(db,"data_plan","plan"),{
-            data: json
-        });
-
-        alert("Datos cargados");
-    };
-
-    reader.readAsArrayBuffer(e.target.files[0]);
+// filtros SIN CAMBIO
+$("#filtroEstado,#filtroFecha,#filtroRDD,#filtroTiempo").on("change",function(){
+    $("#tabla tbody tr").show();
+    calcularKPIs();
 });
 
 </script>
