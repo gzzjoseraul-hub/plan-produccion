@@ -11,15 +11,27 @@
 
 <style>
 body { font-family: Arial; margin:20px; background:#f5f5f5; }
-h1 { color:#b00000; }
 
-.filtros { display:flex; gap:15px; margin-bottom:10px; }
+.top-bar {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+}
+
+.kpis {
+    display:flex;
+    gap:15px;
+    font-weight:bold;
+}
+
+.filtros { display:flex; gap:15px; }
+
 .filtro-box { display:flex; flex-direction:column; font-size:12px; }
 
-.urgente { background:#ff0000 !important; color:white; }
-.consolidada { background:#00b4ff !important; color:white; }
-.avance { background:#ffff00 !important; }
-.embarque { background:#ff6a00 !important; color:white; }
+.urgente { background:#ff0000; color:white; }
+.consolidada { background:#00b4ff; color:white; }
+.avance { background:#ffff00; }
+.embarque { background:#ff6a00; color:white; }
 
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
@@ -32,6 +44,8 @@ h1 { color:#b00000; }
 <h1>📊 Plan de Producción</h1>
 
 <input type="file" id="upload">
+
+<div class="top-bar">
 
 <div class="filtros">
 
@@ -64,11 +78,13 @@ h1 { color:#b00000; }
 
 </div>
 
-<div>
-Total $: <span id="totalMonto">$0</span> |
-Overdue $: <span id="totalOverdue">$0</span> |
-Órdenes: <span id="totalOrders">0</span> |
-Afectadas: <span id="totalAfectadas">0</span>
+<div class="kpis">
+<div>Total $: <span id="totalMonto">$0</span></div>
+<div>Overdue $: <span id="totalOverdue">$0</span></div>
+<div>Órdenes: <span id="totalOrders">0</span></div>
+<div>Afectadas: <span id="totalAfectadas">0</span></div>
+</div>
+
 </div>
 
 <br>
@@ -104,17 +120,16 @@ let cacheEstado = {};
 let cacheComentarios = {};
 let cacheAfectacion = {};
 
-// ✅ FORMATO
-function money(v){
-    return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
-}
-
-// ✅ FECHA EXCEL → NORMAL
+// FORMATOS
 function excelToDate(v){
     if(typeof v==="number"){
         return new Date((v-25569)*86400*1000).toISOString().split("T")[0];
     }
     return v || "";
+}
+
+function money(v){
+    return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
 }
 
 function calcTiempo(r){
@@ -125,28 +140,16 @@ function calcTiempo(r){
     return "entiempo";
 }
 
-/////////////////////////////////////////////////////
-// ✅ DATA GLOBAL (EXCEL)
-/////////////////////////////////////////////////////
-
+// 🔥 DATA GLOBAL
 onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
     if(docSnap.exists()){
-        let data = docSnap.data().data;
-        if(data && data.length){
-            renderTable(data);
-        }
+        renderTable(docSnap.data().data);
     }
 });
 
-/////////////////////////////////////////////////////
-// ✅ COMENTARIOS / ESTADO (FIREBASE)
-/////////////////////////////////////////////////////
-
+// 🔥 FIREBASE USUARIO
 onSnapshot(collection(db,"comentarios"), snap=>{
-
-    cacheEstado = {};
-    cacheComentarios = {};
-    cacheAfectacion = {};
+    cacheEstado={}; cacheComentarios={}; cacheAfectacion={};
 
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
@@ -157,10 +160,7 @@ onSnapshot(collection(db,"comentarios"), snap=>{
     aplicarDatos();
 });
 
-/////////////////////////////////////////////////////
-// ✅ RENDER TABLA
-/////////////////////////////////////////////////////
-
+// RENDER
 function renderTable(data){
 
     let html="";
@@ -169,10 +169,8 @@ function renderTable(data){
 
         let id=r["Order"];
         let monto=r["Monto"]||0;
-
-        let fecha = excelToDate(r["Release date (actual)"]);
-        let rdd = excelToDate(r["RDD"]);
-
+        let fecha=excelToDate(r["Release date (actual)"]);
+        let rdd=excelToDate(r["RDD"]);
         let t=calcTiempo(rdd);
 
         html+=`
@@ -220,10 +218,7 @@ function renderTable(data){
     calcularKPIs();
 }
 
-/////////////////////////////////////////////////////
-// ✅ APLICAR DATOS (CLAVE PARA FILTROS)
-/////////////////////////////////////////////////////
-
+// APLICAR DATOS
 function aplicarDatos(){
 
     Object.keys(cacheComentarios).forEach(id=>{
@@ -232,16 +227,13 @@ function aplicarDatos(){
 
     Object.keys(cacheEstado).forEach(id=>{
         let row=$(`tr[data-id='${id}']`);
-        let sel=$(`select.estado[data-id='${id}']`);
-
-        sel.val(cacheEstado[id]);
-
         row.removeClass("urgente consolidada avance embarque");
+
         if(cacheEstado[id]) row.addClass(cacheEstado[id]);
 
-        // 🔥 CLAVE PARA FILTRO
-        row.find("td[data-estado]")
-           .attr("data-estado", cacheEstado[id]);
+        $(`select.estado[data-id='${id}']`).val(cacheEstado[id]);
+
+        row.find("td[data-estado]").attr("data-estado",cacheEstado[id]);
     });
 
     Object.keys(cacheAfectacion).forEach(id=>{
@@ -249,10 +241,46 @@ function aplicarDatos(){
     });
 }
 
-/////////////////////////////////////////////////////
-// ✅ FILTROS (ARREGLADO)
-/////////////////////////////////////////////////////
+// ✅ EVENTOS CORREGIDOS (CLAVE)
 
+$(document).on("change",".comment-box", async function(){
+    let id=$(this).data("id");
+    cacheComentarios[id]=this.value;
+
+    await setDoc(doc(db,"comentarios",id.toString()),{
+        comentario:this.value,
+        estado:cacheEstado[id]||"",
+        afectacion:cacheAfectacion[id]||""
+    });
+});
+
+$(document).on("change",".estado", async function(){
+    let id=$(this).data("id");
+    cacheEstado[id]=this.value;
+
+    await setDoc(doc(db,"comentarios",id.toString()),{
+        comentario:cacheComentarios[id]||"",
+        estado:this.value,
+        afectacion:cacheAfectacion[id]||""
+    });
+
+    aplicarDatos();
+});
+
+$(document).on("change",".afectacion", async function(){
+    let id=$(this).data("id");
+    cacheAfectacion[id]=this.value;
+
+    await setDoc(doc(db,"comentarios",id.toString()),{
+        comentario:cacheComentarios[id]||"",
+        estado:cacheEstado[id]||"",
+        afectacion:this.value
+    });
+
+    calcularKPIs();
+});
+
+// FILTROS
 function aplicarFiltros(){
 
     let estado=$("#filtroEstado").val();
@@ -269,7 +297,6 @@ function aplicarFiltros(){
         let f=$(this).data("fecha");
 
         if(estado && est!==estado) ok=false;
-
         if(fecha && f!==fecha) ok=false;
 
         if(tiempo==="afectadas"){
@@ -286,25 +313,7 @@ function aplicarFiltros(){
 
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
 
-/////////////////////////////////////////////////////
-// ✅ GUARDAR
-/////////////////////////////////////////////////////
-
-$(document).on("change",".comment-box, .estado, .afectacion", async function(){
-
-    let id=$(this).data("id");
-
-    await setDoc(doc(db,"comentarios",id.toString()),{
-        comentario: $(`input[data-id='${id}']`).val() || "",
-        estado: $(`select.estado[data-id='${id}']`).val() || "",
-        afectacion: $(`select.afectacion[data-id='${id}']`).val() || ""
-    });
-});
-
-/////////////////////////////////////////////////////
-// ✅ SUBIR EXCEL
-/////////////////////////////////////////////////////
-
+// SUBIR EXCEL
 $("#upload").on("change",function(e){
 
     let reader=new FileReader();
@@ -318,16 +327,13 @@ $("#upload").on("change",function(e){
             data: json
         });
 
-        alert("Datos cargados correctamente");
+        alert("Datos cargados");
     };
 
     reader.readAsArrayBuffer(e.target.files[0]);
 });
 
-/////////////////////////////////////////////////////
-// ✅ KPI
-/////////////////////////////////////////////////////
-
+// KPI
 function calcularKPIs(){
 
     let total=0, overdue=0, c=0, afectadas=0;
@@ -354,3 +360,4 @@ function calcularKPIs(){
 
 </body>
 </html>
+``
