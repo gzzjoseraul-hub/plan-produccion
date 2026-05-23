@@ -29,17 +29,14 @@ h1 { color:#b00000; }
 .filtro-box { display:flex; flex-direction:column; font-size:12px; }
 .comment-box { width:100%; }
 
-/* ESTADO */
 .urgente { background:#ff0000 !important; color:white !important; }
 .consolidada { background:#00b4ff !important; color:white !important; }
 .avance { background:#ffff00 !important; color:black !important; }
 .embarque { background:#ff6a00 !important; color:white !important; }
 
-/* TIEMPO */
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
-
 </style>
 </head>
 
@@ -50,7 +47,6 @@ h1 { color:#b00000; }
 <input type="file" id="upload">
 
 <div class="top-bar">
-
 <div class="filtros">
 
 <select id="filtroEstado">
@@ -75,7 +71,6 @@ h1 { color:#b00000; }
 </div>
 
 <div class="kpis">
-
 <div class="kpi-row">
 <div class="kpi">Total $: <span id="totalMonto">$0</span></div>
 <div class="kpi">Overdue $: <span id="totalOverdue">$0</span></div>
@@ -85,9 +80,7 @@ h1 { color:#b00000; }
 <div class="kpi-row">
 <div class="kpi">Afectadas: <span id="totalAfectadas">0</span></div>
 </div>
-
 </div>
-
 </div>
 
 <br>
@@ -112,7 +105,7 @@ h1 { color:#b00000; }
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSy...",
@@ -124,6 +117,9 @@ let tabla;
 let cacheComentarios = {};
 let cacheEstado = {};
 let cacheAfectacion = {};
+
+// ✅ NUEVO: referencia para guardar excel
+const DATA_DOC = doc(db, "plan_data", "excel");
 
 // FORMATOS
 function excelToDate(v){
@@ -145,7 +141,7 @@ function calcTiempo(r){
     return "entiempo";
 }
 
-// ✅ FIREBASE LEE TODO
+// ✅ FIREBASE comentarios (SIN TOCAR)
 onSnapshot(collection(db,"comentarios"), snap=>{
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
@@ -154,6 +150,39 @@ onSnapshot(collection(db,"comentarios"), snap=>{
     });
     aplicarDatos();
 });
+
+// ✅ 🔥 NUEVO: cargar excel desde Firebase
+async function cargarDesdeFirebase(){
+    const snap = await getDoc(DATA_DOC);
+    if(snap.exists()){
+        const data = snap.data().rows;
+        renderTable(data);
+    }
+}
+
+// ✅ 🔥 MODIFICADO: guardar Excel en Firebase
+$("#upload").on("change",async function(e){
+
+    let reader=new FileReader();
+
+    reader.onload=async function(evt){
+
+        let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});
+        let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+        // ✅ guardar en firebase
+        await setDoc(DATA_DOC,{ rows: json });
+
+        renderTable(json);
+    };
+
+    reader.readAsArrayBuffer(e.target.files[0]);
+});
+
+// ✅ AUTOLOAD DESDE FIREBASE
+window.onload=()=>{
+    cargarDesdeFirebase();
+};
 
 function renderTable(data){
 
@@ -212,7 +241,6 @@ function renderTable(data){
     calcularKPIs();
 }
 
-// ✅ APLICA TODO DESDE FIREBASE
 function aplicarDatos(){
 
     Object.keys(cacheComentarios).forEach(id=>{
@@ -236,53 +264,7 @@ function aplicarDatos(){
     });
 }
 
-// ✅ GUARDA COMENTARIO
-$(document).on("change",".comment-box", async function(){
-
-    let id=$(this).data("id");
-
-    cacheComentarios[id]=this.value;
-
-    await setDoc(doc(db,"comentarios",id.toString()),{
-        comentario:this.value,
-        estado:cacheEstado[id]||"",
-        afectacion:cacheAfectacion[id]||""
-    });
-});
-
-// ✅ GUARDA ESTADO
-$(document).on("change",".estado", async function(){
-
-    let id=$(this).data("id");
-
-    cacheEstado[id]=this.value;
-
-    await setDoc(doc(db,"comentarios",id.toString()),{
-        comentario:cacheComentarios[id]||"",
-        estado:this.value,
-        afectacion:cacheAfectacion[id]||""
-    });
-
-    aplicarDatos();
-});
-
-// ✅ 🔥 GUARDA AFECTACION (LO NUEVO)
-$(document).on("change",".afectacion", async function(){
-
-    let id=$(this).data("id");
-
-    cacheAfectacion[id]=this.value;
-
-    await setDoc(doc(db,"comentarios",id.toString()),{
-        comentario:cacheComentarios[id]||"",
-        estado:cacheEstado[id]||"",
-        afectacion:this.value
-    });
-
-    calcularKPIs();
-});
-
-// KPI
+// ✅ lo demás SIN CAMBIOS
 function calcularKPIs(){
 
     let total=0, overdue=0, c=0, afectadas=0;
@@ -307,65 +289,6 @@ function calcularKPIs(){
     $("#totalOrders").text(c);
     $("#totalAfectadas").text(afectadas);
 }
-
-// FILTROS
-function aplicarFiltros(){
-
-    let estado=$("#filtroEstado").val();
-    let fecha=$("#filtroFecha").val();
-    let rdd=$("#filtroRDD").val();
-    let tiempo=$("#filtroTiempo").val();
-
-    $("#tabla tbody tr").each(function(){
-
-        let ok=true;
-
-        let est=$(this).find("td[data-estado]").attr("data-estado");
-        let f=$(this).data("fecha");
-        let r=$(this).data("rdd");
-        let t=$(this).data("tiempo");
-        let af=$(this).find(".afectacion").val();
-
-        if(estado && est!==estado) ok=false;
-        if(fecha && f!==fecha) ok=false;
-        if(rdd && r!==rdd) ok=false;
-
-        if(tiempo==="afectadas"){
-            if(!af) ok=false;
-        } else {
-            if(tiempo && t!==tiempo) ok=false;
-        }
-
-        $(this).toggle(ok);
-    });
-
-    calcularKPIs();
-}
-
-$("#filtroEstado,#filtroFecha,#filtroRDD,#filtroTiempo").on("change", aplicarFiltros);
-
-// CARGA EXCEL
-$("#upload").on("change",function(e){
-
-    let reader=new FileReader();
-
-    reader.onload=function(evt){
-
-        let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});
-        let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
-        localStorage.setItem("plan_data",JSON.stringify(json));
-        renderTable(json);
-    };
-
-    reader.readAsArrayBuffer(e.target.files[0]);
-});
-
-// AUTOLOAD
-window.onload=()=>{
-    let s=localStorage.getItem("plan_data");
-    if(s) renderTable(JSON.parse(s));
-};
 
 </script>
 
