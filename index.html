@@ -13,6 +13,8 @@
 body { font-family: Arial; margin:20px; background:#f5f5f5; }
 h1 { color:#b00000; }
 
+.filtros { display:flex; gap:10px; margin-bottom:10px; }
+
 .urgente { background:#ff0000 !important; color:white; }
 .consolidada { background:#00b4ff !important; color:white; }
 .avance { background:#ffff00 !important; }
@@ -21,6 +23,7 @@ h1 { color:#b00000; }
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
+
 </style>
 </head>
 
@@ -30,7 +33,23 @@ h1 { color:#b00000; }
 
 <input type="file" id="upload">
 
-<br><br>
+<div class="filtros">
+<select id="filtroEstado">
+<option value="">Todos</option>
+<option value="urgente">Urgente</option>
+<option value="consolidada">Consolidada</option>
+<option value="avance">MAX AVANCE</option>
+<option value="embarque">MAX EMBARQUE</option>
+</select>
+
+<select id="filtroTiempo">
+<option value="">Todos</option>
+<option value="overdue">Overdue</option>
+<option value="servicio">Servicio</option>
+<option value="entiempo">En tiempo</option>
+<option value="afectadas">Afectadas</option>
+</select>
+</div>
 
 <div>
 Total $: <span id="totalMonto">$0</span> |
@@ -67,11 +86,11 @@ const app = initializeApp({
 
 const db = getFirestore(app);
 
-// CACHE
 let cacheEstado = {};
 let cacheComentarios = {};
 let cacheAfectacion = {};
 
+// FORMATO
 function money(v){
     return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
 }
@@ -94,7 +113,7 @@ onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
     }
 });
 
-// COMENTARIOS / ESTADO
+// DATOS USUARIO
 onSnapshot(collection(db,"comentarios"), snap=>{
 
     cacheEstado = {};
@@ -178,7 +197,6 @@ function aplicarDatos(){
         let sel=$(`select.estado[data-id='${id}']`);
 
         sel.val(cacheEstado[id]);
-
         row.removeClass("urgente consolidada avance embarque");
         if(cacheEstado[id]) row.addClass(cacheEstado[id]);
 
@@ -189,6 +207,36 @@ function aplicarDatos(){
         $(`select.afectacion[data-id='${id}']`).val(cacheAfectacion[id]);
     });
 }
+
+// FILTROS
+function aplicarFiltros(){
+
+    let estado=$("#filtroEstado").val();
+    let tiempo=$("#filtroTiempo").val();
+
+    $("#tabla tbody tr").each(function(){
+
+        let ok=true;
+
+        let est=$(this).find("td[data-estado]").attr("data-estado");
+        let t=$(this).data("tiempo");
+        let af=$(this).find(".afectacion").val();
+
+        if(estado && est!==estado) ok=false;
+
+        if(tiempo==="afectadas"){
+            if(!af) ok=false;
+        } else {
+            if(tiempo && t!==tiempo) ok=false;
+        }
+
+        $(this).toggle(ok);
+    });
+
+    calcularKPIs();
+}
+
+$("#filtroEstado,#filtroTiempo").on("change", aplicarFiltros);
 
 // GUARDAR
 $(document).on("change",".comment-box", async function(){
@@ -248,7 +296,7 @@ $("#upload").on("change",function(e){
             data: json
         });
 
-        alert("Datos cargados correctamente");
+        alert("Datos cargados para todos");
     };
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -259,7 +307,7 @@ function calcularKPIs(){
 
     let total=0, overdue=0, c=0, afectadas=0;
 
-    $("#tabla tbody tr").each(function(){
+    $("#tabla tbody tr:visible").each(function(){
 
         let monto=parseFloat($(this).data("monto"))||0;
         let t=$(this).data("tiempo");
