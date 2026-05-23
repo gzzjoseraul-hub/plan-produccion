@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Plan Producción</title>
 
-<!-- ✅ LIBRERÍAS BIEN (ARREGLADAS) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -14,17 +13,14 @@
 body { font-family: Arial; margin:20px; background:#f5f5f5; }
 h1 { color:#b00000; }
 
-/* COLORES */
 .urgente { background:#ff0000 !important; color:white; }
 .consolidada { background:#00b4ff !important; color:white; }
 .avance { background:#ffff00 !important; }
 .embarque { background:#ff6a00 !important; color:white; }
 
-/* TIEMPO */
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
-
 </style>
 </head>
 
@@ -71,17 +67,15 @@ const app = initializeApp({
 
 const db = getFirestore(app);
 
-// ✅ CACHE
+// CACHE
 let cacheEstado = {};
 let cacheComentarios = {};
 let cacheAfectacion = {};
 
-// ✅ FORMATO
 function money(v){
     return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
 }
 
-// ✅ TIEMPO
 function calcTiempo(r){
     let hoy=new Date().toISOString().split("T")[0];
     if(!r) return "";
@@ -90,25 +84,17 @@ function calcTiempo(r){
     return "entiempo";
 }
 
-//////////////////////////////////////////////////////
-// ✅ 1. DATA GLOBAL (EXCEL)
-//////////////////////////////////////////////////////
-
+// DATA GLOBAL
 onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
-
     if(docSnap.exists()){
         let data = docSnap.data().data;
-
-        if(data && data.length > 0){
+        if(data && data.length){
             renderTable(data);
         }
     }
 });
 
-//////////////////////////////////////////////////////
-// ✅ 2. DATOS POR USUARIO (ESTADO, AFECTACION, COMENTARIO)
-//////////////////////////////////////////////////////
-
+// COMENTARIOS / ESTADO
 onSnapshot(collection(db,"comentarios"), snap=>{
 
     cacheEstado = {};
@@ -124,10 +110,7 @@ onSnapshot(collection(db,"comentarios"), snap=>{
     aplicarDatos();
 });
 
-//////////////////////////////////////////////////////
-// ✅ RENDER
-//////////////////////////////////////////////////////
-
+// RENDER
 function renderTable(data){
 
     let html="";
@@ -170,9 +153,6 @@ function renderTable(data){
 
     $("#tabla tbody").html(html);
 
-    aplicarDatos(); ✅
-    calcularKPIs();
-
     if($.fn.DataTable.isDataTable('#tabla')){
         $('#tabla').DataTable().destroy();
     }
@@ -181,12 +161,12 @@ function renderTable(data){
         paging:false,
         info:false
     });
+
+    aplicarDatos();
+    calcularKPIs();
 }
 
-//////////////////////////////////////////////////////
-// ✅ APLICAR DATOS GUARDADOS
-//////////////////////////////////////////////////////
-
+// APLICAR DATOS
 function aplicarDatos(){
 
     Object.keys(cacheComentarios).forEach(id=>{
@@ -210,13 +190,11 @@ function aplicarDatos(){
     });
 }
 
-//////////////////////////////////////////////////////
-// ✅ GUARDAR CAMBIOS
-//////////////////////////////////////////////////////
-
+// GUARDAR
 $(document).on("change",".comment-box", async function(){
 
     let id=$(this).data("id");
+
     cacheComentarios[id]=this.value;
 
     await setDoc(doc(db,"comentarios",id.toString()),{
@@ -229,6 +207,7 @@ $(document).on("change",".comment-box", async function(){
 $(document).on("change",".estado", async function(){
 
     let id=$(this).data("id");
+
     cacheEstado[id]=this.value;
 
     await setDoc(doc(db,"comentarios",id.toString()),{
@@ -243,6 +222,7 @@ $(document).on("change",".estado", async function(){
 $(document).on("change",".afectacion", async function(){
 
     let id=$(this).data("id");
+
     cacheAfectacion[id]=this.value;
 
     await setDoc(doc(db,"comentarios",id.toString()),{
@@ -254,10 +234,7 @@ $(document).on("change",".afectacion", async function(){
     calcularKPIs();
 });
 
-//////////////////////////////////////////////////////
-// ✅ SUBIR EXCEL
-//////////////////////////////////////////////////////
-
+// SUBIR EXCEL
 $("#upload").on("change",function(e){
 
     let reader=new FileReader();
@@ -271,16 +248,13 @@ $("#upload").on("change",function(e){
             data: json
         });
 
-        alert("✅ Datos cargados para todos");
+        alert("Datos cargados correctamente");
     };
 
     reader.readAsArrayBuffer(e.target.files[0]);
 });
 
-//////////////////////////////////////////////////////
-// ✅ KPI
-//////////////////////////////////////////////////////
-
+// KPI
 function calcularKPIs(){
 
     let total=0, overdue=0, c=0, afectadas=0;
