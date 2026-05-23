@@ -13,30 +13,15 @@
 body { font-family: Arial; margin:20px; background:#f5f5f5; }
 h1 { color:#b00000; }
 
-.top-bar { display:flex; justify-content:space-between; align-items:center; }
-.filtros { display:flex; gap:15px; }
-
-.kpis { display:flex; flex-direction:column; gap:10px; font-weight:bold; }
-.kpi-row { display:flex; gap:20px; }
-
-.kpi {
-    background:#fff;
-    padding:10px 15px;
-    border-radius:6px;
-    box-shadow:0 0 5px rgba(0,0,0,0.1);
-}
-
-.filtro-box { display:flex; flex-direction:column; font-size:12px; }
-.comment-box { width:100%; }
-
-.urgente { background:#ff0000 !important; color:white !important; }
-.consolidada { background:#00b4ff !important; color:white !important; }
-.avance { background:#ffff00 !important; color:black !important; }
-.embarque { background:#ff6a00 !important; color:white !important; }
+.urgente { background:#ff0000 !important; color:white; }
+.consolidada { background:#00b4ff !important; color:white; }
+.avance { background:#ffff00 !important; }
+.embarque { background:#ff6a00 !important; color:white; }
 
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
+
 </style>
 </head>
 
@@ -46,41 +31,11 @@ h1 { color:#b00000; }
 
 <input type="file" id="upload">
 
-<div class="top-bar">
-<div class="filtros">
-
-<select id="filtroEstado">
-<option value="">Todos</option>
-<option value="urgente">Urgente</option>
-<option value="consolidada">Consolidada</option>
-<option value="avance">MAX AVANCE</option>
-<option value="embarque">MAX EMBARQUE</option>
-</select>
-
-<input type="date" id="filtroFecha">
-<input type="date" id="filtroRDD">
-
-<select id="filtroTiempo">
-<option value="">Todos</option>
-<option value="overdue">Overdue</option>
-<option value="servicio">Servicio</option>
-<option value="entiempo">En tiempo</option>
-<option value="afectadas">Afectadas</option>
-</select>
-
-</div>
-
-<div class="kpis">
-<div class="kpi-row">
-<div class="kpi">Total $: <span id="totalMonto">$0</span></div>
-<div class="kpi">Overdue $: <span id="totalOverdue">$0</span></div>
-<div class="kpi">Órdenes: <span id="totalOrders">0</span></div>
-</div>
-
-<div class="kpi-row">
-<div class="kpi">Afectadas: <span id="totalAfectadas">0</span></div>
-</div>
-</div>
+<div>
+Total $: <span id="totalMonto">$0</span> |
+Overdue $: <span id="totalOverdue">$0</span> |
+Órdenes: <span id="totalOrders">0</span> |
+Afectadas: <span id="totalAfectadas">0</span>
 </div>
 
 <br>
@@ -89,10 +44,7 @@ h1 { color:#b00000; }
 <thead>
 <tr>
 <th>Order</th>
-<th>Material</th>
-<th>Cantidad</th>
 <th>Monto</th>
-<th>Fecha</th>
 <th>RDD</th>
 <th>Estado</th>
 <th>Afectación</th>
@@ -105,35 +57,21 @@ h1 { color:#b00000; }
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, doc, collection, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSy...",
   projectId: "pp-abb"
 });
+
 const db = getFirestore(app);
 
-let tabla;
-let cacheComentarios = {};
+// ✅ CACHE
 let cacheEstado = {};
+let cacheComentarios = {};
 let cacheAfectacion = {};
 
-// ✅ NUEVO: referencia para guardar excel
-const DATA_DOC = doc(db, "plan_data", "excel");
-
-// FORMATOS
-function excelToDate(v){
-    if(typeof v==="number"){
-        return new Date((v-25569)*86400*1000).toISOString().split("T")[0];
-    }
-    if(!v) return "";
-    return new Date(v).toISOString().split("T")[0];
-}
-
-function money(v){
-    return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
-}
-
+// ✅ CALC TIEMPO
 function calcTiempo(r){
     let hoy=new Date().toISOString().split("T")[0];
     if(r<hoy) return "overdue";
@@ -141,49 +79,31 @@ function calcTiempo(r){
     return "entiempo";
 }
 
-// ✅ FIREBASE comentarios (SIN TOCAR)
+// ✅ FORMATO
+function money(v){
+    return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0);
+}
+
+// ✅ ESCUCHA DATA GLOBAL (EXCEL)
+onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
+    if(docSnap.exists()){
+        let data = docSnap.data().data;
+        renderTable(data);
+    }
+});
+
+// ✅ ESCUCHA COMENTARIOS / ESTADO / AFECTACION
 onSnapshot(collection(db,"comentarios"), snap=>{
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
         cacheEstado[d.id]=d.data().estado||"";
         cacheAfectacion[d.id]=d.data().afectacion||"";
     });
+
     aplicarDatos();
 });
 
-// ✅ 🔥 NUEVO: cargar excel desde Firebase
-async function cargarDesdeFirebase(){
-    const snap = await getDoc(DATA_DOC);
-    if(snap.exists()){
-        const data = snap.data().rows;
-        renderTable(data);
-    }
-}
-
-// ✅ 🔥 MODIFICADO: guardar Excel en Firebase
-$("#upload").on("change",async function(e){
-
-    let reader=new FileReader();
-
-    reader.onload=async function(evt){
-
-        let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});
-        let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
-        // ✅ guardar en firebase
-        await setDoc(DATA_DOC,{ rows: json });
-
-        renderTable(json);
-    };
-
-    reader.readAsArrayBuffer(e.target.files[0]);
-});
-
-// ✅ AUTOLOAD DESDE FIREBASE
-window.onload=()=>{
-    cargarDesdeFirebase();
-};
-
+// ✅ RENDER
 function renderTable(data){
 
     let html="";
@@ -191,18 +111,14 @@ function renderTable(data){
     data.forEach(r=>{
 
         let id=r["Order"];
-        let f=excelToDate(r["Release date (actual)"]);
-        let rdd=excelToDate(r["RDD"]);
-        let t=calcTiempo(rdd);
         let monto=r["Monto"]||0;
+        let rdd=r["RDD"]||"";
+        let t=calcTiempo(rdd);
 
         html+=`
-<tr data-id="${id}" data-fecha="${f}" data-rdd="${rdd}" data-tiempo="${t}" data-monto="${monto}" class="${t}">
+<tr data-id="${id}" data-monto="${monto}" class="${t}">
 <td>${id}</td>
-<td>${r["Material Number"]||""}</td>
-<td>${r["Order quantity (GMEIN)"]||0}</td>
 <td>${money(monto)}</td>
-<td>${f}</td>
 <td>${rdd}</td>
 
 <td data-estado="">
@@ -217,7 +133,7 @@ function renderTable(data){
 
 <td>
 <select class="afectacion" data-id="${id}">
-<option value=""></option>
+<option></option>
 <option value="MATERIAL">MATERIAL</option>
 <option value="IR">IR</option>
 <option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option>
@@ -230,17 +146,11 @@ function renderTable(data){
 
     $("#tabla tbody").html(html);
 
-    if(tabla) tabla.destroy();
-
-    tabla=$("#tabla").DataTable({
-        paging:false,
-        info:false
-    });
-
-    aplicarDatos();
+    aplicarDatos(); ✅ 🔥 CRÍTICO
     calcularKPIs();
 }
 
+// ✅ APLICA ESTADO / AFECTACION / COMENTARIO
 function aplicarDatos(){
 
     Object.keys(cacheComentarios).forEach(id=>{
@@ -252,8 +162,8 @@ function aplicarDatos(){
         let sel=$(`select.estado[data-id='${id}']`);
 
         sel.val(cacheEstado[id]);
-        row.removeClass("urgente consolidada avance embarque");
 
+        row.removeClass("urgente consolidada avance embarque");
         if(cacheEstado[id]) row.addClass(cacheEstado[id]);
 
         row.find("td[data-estado]").attr("data-estado",cacheEstado[id]);
@@ -264,17 +174,81 @@ function aplicarDatos(){
     });
 }
 
-// ✅ lo demás SIN CAMBIOS
+// ✅ GUARDAR COMENTARIO
+$(document).on("change",".comment-box", async function(){
+
+    let id=$(this).data("id");
+
+    cacheComentarios[id]=this.value;
+
+    await setDoc(doc(db,"comentarios",id.toString()),{
+        comentario:this.value,
+        estado:cacheEstado[id]||"",
+        afectacion:cacheAfectacion[id]||""
+    });
+});
+
+// ✅ GUARDAR ESTADO
+$(document).on("change",".estado", async function(){
+
+    let id=$(this).data("id");
+
+    cacheEstado[id]=this.value;
+
+    await setDoc(doc(db,"comentarios",id.toString()),{
+        comentario:cacheComentarios[id]||"",
+        estado:this.value,
+        afectacion:cacheAfectacion[id]||""
+    });
+
+    aplicarDatos();
+});
+
+// ✅ GUARDAR AFECTACION
+$(document).on("change",".afectacion", async function(){
+
+    let id=$(this).data("id");
+
+    cacheAfectacion[id]=this.value;
+
+    await setDoc(doc(db,"comentarios",id.toString()),{
+        comentario:cacheComentarios[id]||"",
+        estado:cacheEstado[id]||"",
+        afectacion:this.value
+    });
+
+    calcularKPIs();
+});
+
+// ✅ SUBIR EXCEL → FIREBASE GLOBAL
+$("#upload").on("change",function(e){
+
+    let reader=new FileReader();
+
+    reader.onload=async function(evt){
+
+        let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});
+        let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+        await setDoc(doc(db,"data_plan","plan"),{
+            data: json
+        });
+
+        alert("✅ Excel cargado para todos");
+    };
+
+    reader.readAsArrayBuffer(e.target.files[0]);
+});
+
+// ✅ KPI
 function calcularKPIs(){
 
     let total=0, overdue=0, c=0, afectadas=0;
 
     $("#tabla tbody tr").each(function(){
 
-        if($(this).css("display")==="none") return;
-
         let monto=parseFloat($(this).data("monto"))||0;
-        let t=$(this).data("tiempo");
+        let t=$(this).attr("class");
 
         total+=monto;
         if(t==="overdue") overdue+=monto;
