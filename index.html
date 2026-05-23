@@ -25,17 +25,19 @@ body { font-family: Arial; margin:20px; background:#f5f5f5; }
 }
 
 .filtros { display:flex; gap:15px; }
-
 .filtro-box { display:flex; flex-direction:column; font-size:12px; }
 
-.urgente { background:#ff0000; color:white; }
-.consolidada { background:#00b4ff; color:white; }
-.avance { background:#ffff00; }
-.embarque { background:#ff6a00; color:white; }
+/* COLORES */
+.urgente { background:#ff0000 !important; color:white; }
+.consolidada { background:#00b4ff !important; color:white; }
+.avance { background:#ffff00 !important; }
+.embarque { background:#ff6a00 !important; color:white; }
 
+/* TIEMPO */
 .overdue { border-left:5px solid red; }
 .servicio { border-left:5px solid orange; }
 .entiempo { border-left:5px solid green; }
+
 </style>
 </head>
 
@@ -120,7 +122,7 @@ let cacheEstado = {};
 let cacheComentarios = {};
 let cacheAfectacion = {};
 
-// FORMATOS
+// UTILIDADES
 function excelToDate(v){
     if(typeof v==="number"){
         return new Date((v-25569)*86400*1000).toISOString().split("T")[0];
@@ -140,16 +142,18 @@ function calcTiempo(r){
     return "entiempo";
 }
 
-// 🔥 DATA GLOBAL
+// DATA GLOBAL
 onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
     if(docSnap.exists()){
         renderTable(docSnap.data().data);
     }
 });
 
-// 🔥 FIREBASE USUARIO
+// COMENTARIOS
 onSnapshot(collection(db,"comentarios"), snap=>{
-    cacheEstado={}; cacheComentarios={}; cacheAfectacion={};
+    cacheEstado = {};
+    cacheComentarios = {};
+    cacheAfectacion = {};
 
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
@@ -195,7 +199,7 @@ function renderTable(data){
 <option></option>
 <option value="MATERIAL">MATERIAL</option>
 <option value="IR">IR</option>
-<option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option>
+<option value="CASO DE INGENIERIA">CASO DE INGENIERIA"></option>
 </select>
 </td>
 
@@ -218,31 +222,41 @@ function renderTable(data){
     calcularKPIs();
 }
 
-// APLICAR DATOS
+// 🔥 APLICAR DATOS + COLORES (CLAVE FINAL)
 function aplicarDatos(){
 
-    Object.keys(cacheComentarios).forEach(id=>{
-        $(`input[data-id='${id}']`).val(cacheComentarios[id]);
-    });
+    $("#tabla tbody tr").each(function(){
 
-    Object.keys(cacheEstado).forEach(id=>{
-        let row=$(`tr[data-id='${id}']`);
-        row.removeClass("urgente consolidada avance embarque");
+        let id=$(this).data("id");
 
-        if(cacheEstado[id]) row.addClass(cacheEstado[id]);
+        // comentario
+        if(cacheComentarios[id]){
+            $(this).find(".comment-box").val(cacheComentarios[id]);
+        }
 
-        $(`select.estado[data-id='${id}']`).val(cacheEstado[id]);
+        // estado
+        let estado = cacheEstado[id] || "";
 
-        row.find("td[data-estado]").attr("data-estado",cacheEstado[id]);
-    });
+        $(this).removeClass("urgente consolidada avance embarque");
 
-    Object.keys(cacheAfectacion).forEach(id=>{
-        $(`select.afectacion[data-id='${id}']`).val(cacheAfectacion[id]);
+        if(estado){
+            $(this).addClass(estado);
+        }
+
+        $(this).find(".estado").val(estado);
+        $(this).find("td[data-estado]").attr("data-estado",estado);
+
+        // afectacion
+        $(this).find(".afectacion").val(cacheAfectacion[id] || "");
+
+        // tiempo (colores laterales)
+        let t=$(this).data("tiempo");
+        $(this).removeClass("overdue servicio entiempo");
+        if(t) $(this).addClass(t);
     });
 }
 
-// ✅ EVENTOS CORREGIDOS (CLAVE)
-
+// EVENTOS (SEPARADOS)
 $(document).on("change",".comment-box", async function(){
     let id=$(this).data("id");
     cacheComentarios[id]=this.value;
@@ -327,7 +341,7 @@ $("#upload").on("change",function(e){
             data: json
         });
 
-        alert("Datos cargados");
+        alert("Datos cargados correctamente");
     };
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -360,4 +374,3 @@ function calcularKPIs(){
 
 </body>
 </html>
-``
