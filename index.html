@@ -277,6 +277,7 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 const ADMIN = true;
+const PASSWORD = "835755";
 
 document.addEventListener("DOMContentLoaded", function(){
 
@@ -512,9 +513,46 @@ function calcularKPIs(){
 
 $(document).on("click","#clearData", async function(){
 
+    // ✅ PEDIR CLAVE
+    let pass = prompt("Ingresa la clave:");
+
+    if(pass !== PASSWORD){
+        alert("Clave incorrecta");
+        return;
+    }
+
+    // ✅ CONFIRMACIÓN
     if(!confirm("¿Seguro que quieres limpiar comentarios y afectaciones?")){
         return;
     }
+
+    try {
+
+        let snap = await getDocs(collection(db,"comentarios"));
+
+        for (const d of snap.docs){
+
+            await setDoc(
+                doc(db,"comentarios", d.id),
+                {
+                    comentario: "",
+                    afectacion: ""
+                },
+                { merge: true }
+            );
+
+        }
+
+        alert("Comentarios y afectaciones limpiados");
+
+    } catch(e){
+
+        console.error(e);
+        alert("Error al limpiar");
+
+    }
+
+});
 
     try {
 
