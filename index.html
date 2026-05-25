@@ -247,6 +247,8 @@ table.dataTable {
 <table id="tabla" class="display">
 <thead>
 <tr>
+<th>Sales Order</th>
+<th>Item</th>
 <th>Order</th>
 <th>Monto</th>
 <th>Fecha Prog</th>
@@ -323,6 +325,8 @@ function renderTable(data){
     let html="";
 
     data.forEach(r=>{
+        let so = r["Sales Order"] || "";
+        let item = r["Sales order item"] || "";
         let id=r["Order"];
         let monto=r["Monto"]||0;
         let fecha=excelToDate(r["Release date (actual)"]);
@@ -331,6 +335,8 @@ function renderTable(data){
 
         html+=`
 <tr data-id="${id}" data-monto="${monto}" data-tiempo="${t}" data-fecha="${fecha}" class="${t}">
+<td>${so}</td>
+<td>${item}</td>
 <td>${id}</td>
 <td>${money(monto)}</td>
 <td>${fecha}</td>
