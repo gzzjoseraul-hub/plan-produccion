@@ -58,6 +58,8 @@ body {
     display:flex;
     gap:20px;
     margin-bottom:15px;
+    flex-wrap:wrap;          /* ✅ evita que empuje todo */
+    align-items:flex-start;
 }
 
 .filtro-box {
@@ -112,6 +114,35 @@ table.dataTable {
     border-radius:10px;
     overflow:hidden;
 }
+
+/* ===== LEYENDA DE COLORES ===== */
+
+.legend {
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.legend-item {
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+/* círculos */
+.legend-color {
+    width:12px;
+    height:12px;
+    border-radius:50%;
+}
+
+/* colores */
+.legend-urgente { background:#ff0000; }
+.legend-consolidada { background:#00b4ff; }
+.legend-avance { background:#ffff00; border:1px solid #aaa; }
+.legend-embarque { background:#ff6a00; }
 
 </style>
 </head>
