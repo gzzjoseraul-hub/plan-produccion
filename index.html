@@ -377,7 +377,6 @@ function renderTable(data){
     });
 
     aplicarDatos();
-    calcularKPIs();
 }
 
 // APLICAR DATA
@@ -404,6 +403,10 @@ function aplicarDatos(){
         if(t) $(this).addClass(t);
 
     });
+
+    // ✅ ESTE ES EL CAMBIO
+    calcularKPIs();
+    
 }
 
 // FILTROS
