@@ -138,31 +138,64 @@ table.dataTable {
     <div class="card">
         <div class="filtros">
 
-            <div class="filtro-box">
-                <label>Estado</label>
-                <select id="filtroEstado">
-                    <option value="">Todos</option>
-                    <option value="urgente">Urgente</option>
-                    <option value="consolidada">Consolidada</option>
-                    <option value="avance">MAX AVANCE</option>
-                    <option value="embarque">MAX EMBARQUE</option>
-                </select>
+          
+ <!-- 1. ESTADO -->
+    <div class="filtro-box">
+        <label>Estado</label>
+        <select id="filtroEstado">
+            <option value="">Todos</option>
+            <option value="urgente">Urgente</option>
+            <option value="consolidada">Consolidada</option>
+            <option value="avance">MAX AVANCE</option>
+            <option value="embarque">MAX EMBARQUE</option>
+        </select>
+    </div>
+
+    <!-- 2. FECHA -->
+    <div class="filtro-box">
+        <label>Fecha Programación</label>
+        <input type="date" id="filtroFecha">
+    </div>
+
+    <!-- 3. ESTATUS -->
+    <div class="filtro-box">
+        <label>Estatus</label>
+        <select id="filtroTiempo">
+            <option value="">Todos</option>
+            <option value="overdue">Overdue</option>
+            <option value="servicio">Servicio</option>
+            <option value="entiempo">En tiempo</option>
+            <option value="afectadas">Afectadas</option>
+        </select>
+    </div>
+
+    <!-- 4. ✅ LEYENDA (AL FINAL) -->
+    <div class="filtro-box">
+
+        <label>Estados</label>
+
+        <div class="legend">
+
+            <div class="legend-item">
+                <div class="legend-color legend-urgente"></div>
+                <span>Urgente</span>
             </div>
 
-            <div class="filtro-box">
-                <label>Fecha Programación</label>
-                <input type="date" id="filtroFecha">
+            <div class="legend-item">
+                <div class="legend-color legend-consolidada"></div>
+                <span>Consolidada</span>
             </div>
 
-            <div class="filtro-box">
-                <label>Estatus</label>
-                <select id="filtroTiempo">
-                    <option value="">Todos</option>
-                    <option value="overdue">Overdue</option>
-                    <option value="servicio">Servicio</option>
-                    <option value="entiempo">En tiempo</option>
-                    <option value="afectadas">Afectadas</option>
-                </select>
+            <div class="legend-item">
+                <div class="legend-color legend-avance"></div>
+                <span>MAX AVANCE</span>
+            </div>
+
+            <div class="legend-item">
+                <div class="legend-color legend-embarque"></div>
+                <span>MAX EMBARQUE</span>
+            </div>
+
             </div>
 
         </div>
