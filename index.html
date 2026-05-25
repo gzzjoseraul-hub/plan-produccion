@@ -269,7 +269,7 @@ table.dataTable {
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSy...",
@@ -282,9 +282,10 @@ const ADMIN = true;
 
 document.addEventListener("DOMContentLoaded", function(){
 
-    if(ADMIN){
-        document.getElementById("upload").style.display = "block";
-    }
+   if(ADMIN){
+    document.getElementById("upload").style.display = "block";
+    document.getElementById("clearData").style.display = "inline-block";
+}
 
 });
 
@@ -507,6 +508,43 @@ function calcularKPIs(){
     $("#totalOverdue").text(money(overdue));
     $("#totalOrders").text(c);
     $("#totalAfectadas").text(afectadas);
+}
+
+// ✅ PEGAR AQUÍ ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+$(document).on("click","#clearData", async function(){
+
+    if(!confirm("¿Seguro que quieres limpiar comentarios y afectaciones?")){
+        return;
+    }
+
+    try {
+
+        let snap = await getDocs(collection(db,"comentarios"));
+
+        for (const d of snap.docs){
+
+            await setDoc(
+                doc(db,"comentarios", d.id),
+                {
+                    comentario: "",
+                    afectacion: ""
+                },
+                { merge: true }
+            );
+
+        }
+
+        alert("Comentarios y afectaciones limpiados");
+
+    } catch(e){
+
+        console.error(e);
+        alert("Error al limpiar");
+
+    }
+
+});
 }
 
 </script>
