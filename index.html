@@ -279,12 +279,12 @@ const db = getFirestore(app);
 const ADMIN = true;
 const PASSWORD = "835755";
 
-document.addEventListener("DOMContentLoaded", function(){
+$(document).ready(function(){
 
-   if(ADMIN){
-    document.getElementById("upload").style.display = "block";
-    document.getElementById("clearData").style.display = "inline-block";
-}
+    if(ADMIN){
+        $("#upload").show();
+        $("#clearData").show();
+    }
 
 });
 
