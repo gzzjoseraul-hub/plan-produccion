@@ -86,16 +86,25 @@ body {
     font-weight:bold;
 }
 
-/* COLORES ESTADO */
-.urgente { background:#ff0000 !important; color:white; }
-.consolidada { background:#00b4ff !important; color:white; }
-.avance { background:#ffff00 !important; }
-.embarque { background:#ff6a00 !important; color:white; }
+/* SOLO PINTAR PRIMERAS 3 COLUMNAS */
+.urgente td:nth-child(-n+3) { 
+    background:#ff0000 !important; 
+    color:white; 
+}
 
-/* TIEMPO */
-.overdue { border-left:6px solid red; }
-.servicio { border-left:6px solid orange; }
-.entiempo { border-left:6px solid green; }
+.consolidada td:nth-child(-n+3) { 
+    background:#00b4ff !important; 
+    color:white; 
+}
+
+.avance td:nth-child(-n+3) { 
+    background:#ffff00 !important; 
+}
+
+.embarque td:nth-child(-n+3) { 
+    background:#ff6a00 !important; 
+    color:white; 
+}
 
 /* TABLA */
 table.dataTable {
