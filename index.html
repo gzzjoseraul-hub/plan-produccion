@@ -159,7 +159,10 @@ table.dataTable {
 
 <div class="container">
 
-<input type="file" id="upload">
+<input type="file" id="upload" style="display:none;">
+<button id="clearData" style="margin-left:10px; display:none;">
+    Limpiar comentarios
+</button>
 
 <br><br>
 
@@ -274,6 +277,16 @@ const app = initializeApp({
 });
 
 const db = getFirestore(app);
+
+const ADMIN = true;
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    if(ADMIN){
+        document.getElementById("upload").style.display = "block";
+    }
+
+});
 
 let cacheEstado = {};
 let cacheComentarios = {};
