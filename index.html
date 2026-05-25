@@ -554,34 +554,6 @@ $(document).on("click","#clearData", async function(){
 
 });
 
-    try {
-
-        let snap = await getDocs(collection(db,"comentarios"));
-
-        for (const d of snap.docs){
-
-            await setDoc(
-                doc(db,"comentarios", d.id),
-                {
-                    comentario: "",
-                    afectacion: ""
-                },
-                { merge: true }
-            );
-
-        }
-
-        alert("Comentarios y afectaciones limpiados");
-
-    } catch(e){
-
-        console.error(e);
-        alert("Error al limpiar");
-
-    }
-
-});
-
 </script>
 
 </body>
