@@ -155,6 +155,10 @@ table.dataTable {
         <div class="logo">ABB</div>
         <div class="title">Plan de Producción</div>
     </div>
+
+    <!-- ✅ FECHA Y HORA -->
+    <div id="datetime" style="font-size:14px; font-weight:bold;"></div>
+
 </div>
 
 <div class="container">
@@ -553,6 +557,21 @@ $(document).on("click","#clearData", async function(){
     }
 
 });
+
+// ✅ 👇 PEGA AQUÍ LA FECHA Y HORA 👇
+
+function actualizarFechaHora(){
+
+    let ahora = new Date();
+
+    let fecha = ahora.toLocaleDateString();
+    let hora = ahora.toLocaleTimeString();
+
+    document.getElementById("datetime").innerHTML = fecha + " " + hora;
+}
+
+setInterval(actualizarFechaHora, 1000);
+actualizarFechaHora();
 
 </script>
 
