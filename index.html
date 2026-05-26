@@ -246,6 +246,9 @@ table.dataTable {
         <div class="kpi">Afectadas: <span id="totalAfectadas">0</span></div>
     </div>
 
+<!-- ✅ SEMANA (AQUÍ VA CORRECTO) -->
+<div id="semanaData" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;"></div>
+
 </div>
 
 <br>
@@ -355,6 +358,23 @@ function renderTable(data){
 
     let html="";
 
+    // ✅ CONTADOR SEMANA
+let conteoSemana = {
+    1:0, // lunes
+    2:0, // martes
+    3:0,
+    4:0,
+    5:0,
+    6:0,
+    0:0  // domingo
+};
+
+// obtener inicio de semana (lunes)
+let hoy = new Date();
+let inicioSemana = new Date(hoy);
+inicioSemana.setDate(hoy.getDate() - ((hoy.getDay()+6)%7));
+inicioSemana.setHours(0,0,0,0);
+
     data.forEach(r=>{
         let so = r["Sales Order"] || "";
         let item = r["Sales order item"] || "";
@@ -363,6 +383,19 @@ function renderTable(data){
         let fecha=excelToDate(r["Release date (actual)"]);
         let rdd=excelToDate(r["RDD"]);
         let t=calcTiempo(rdd);
+
+// ✅ CONTAR POR SEMANA ACTUAL
+    if(fecha){
+
+        let f = new Date(fecha);
+
+        if(!isNaN(f) && f >= inicioSemana){
+    
+            let dia = f.getDay();
+            conteoSemana[dia]++;
+
+    }
+}
 
         html+=`
 <tr data-id="${id}" data-monto="${monto}" data-tiempo="${t}" data-fecha="${fecha}" class="${t}">
@@ -408,6 +441,31 @@ function renderTable(data){
     });
 
     aplicarDatos();
+
+// ✅ MOSTRAR TARJETAS SEMANA
+let dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+let htmlSemana = "";
+
+for(let i=1;i<=6;i++){  // lunes a sábado
+
+    htmlSemana += `
+    <div style="
+        background:white;
+        padding:8px;
+        border-radius:8px;
+        box-shadow:0 2px 6px rgba(0,0,0,0.1);
+        font-size:12px;
+        text-align:center;
+        min-width:60px;
+    ">
+        <div><b>${dias[i]}</b></div>
+        <div style="font-size:16px;">${conteoSemana[i]}</div>
+    </div>
+    `;
+}
+
+document.getElementById("semanaData").innerHTML = htmlSemana;
+
 }
 
 // APLICAR DATA
