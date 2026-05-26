@@ -166,6 +166,7 @@ table.dataTable {
 
 <input type="file" id="upload" style="display:none;">
 <button id="clearData" style="display:none;">Limpiar datos</button>
+<button id="downloadExcel">Descargar Excel</button>
 
 <br><br>
 
@@ -662,6 +663,37 @@ $(document).on("click","#clearData", async function(){
 
 });
 
+    $(document).on("click","#downloadExcel", function(){
+
+    let dataExport = [];
+
+    $("#tabla tbody tr:visible").each(function(){
+
+        let row = $(this);
+
+        dataExport.push({
+            "Sales Order": row.find("td:eq(0)").text(),
+            "Item": row.find("td:eq(1)").text(),
+            "Order": row.find("td:eq(2)").text(),
+            "Monto": row.find("td:eq(3)").text(),
+            "Fecha Prog": row.find("td:eq(4)").text(),
+            "RDD": row.find("td:eq(5)").text(),
+            "Estado": row.find(".estado").val() || "",
+            "Afectación": row.find(".afectacion").val() || "",
+            "Comentario": row.find(".comment-box").val() || ""
+        });
+
+    });
+
+    let ws = XLSX.utils.json_to_sheet(dataExport);
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Datos");
+
+    XLSX.writeFile(wb, "PlanProduccion.xlsx");
+
+});
+
+    
 // ✅ 👇 PEGA AQUÍ LA FECHA Y HORA 👇
 
 function actualizarFechaHora(){
