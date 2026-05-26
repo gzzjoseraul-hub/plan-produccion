@@ -239,6 +239,9 @@ table.dataTable {
     </div>
 
     <!-- KPI -->
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+
+    <!-- KPI -->
     <div class="kpis">
         <div class="kpi">Total $: <span id="totalMonto">$0</span></div>
         <div class="kpi">Overdue $: <span id="totalOverdue">$0</span></div>
@@ -246,8 +249,14 @@ table.dataTable {
         <div class="kpi">Afectadas: <span id="totalAfectadas">0</span></div>
     </div>
 
-<!-- ✅ SEMANA (AQUÍ VA CORRECTO) -->
-<div id="semanaData" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;"></div>
+    <!-- SEMANA -->
+    <div>
+        <div style="font-size:12px; color:#555; margin-bottom:5px;">
+            Órdenes liberadas en la semana
+        </div>
+
+        <div id="semanaData" style="display:flex; gap:10px;"></div>
+    </div>
 
 </div>
 
@@ -445,8 +454,12 @@ inicioSemana.setHours(0,0,0,0);
 // ✅ MOSTRAR TARJETAS SEMANA
 let dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 let htmlSemana = "";
+let totalSemana = 0;
 
-for(let i=1;i<=6;i++){  // lunes a sábado
+for(let i=1;i<=6;i++){
+
+    let valor = conteoSemana[i] || 0;
+    totalSemana += valor;
 
     htmlSemana += `
     <div style="
@@ -459,10 +472,27 @@ for(let i=1;i<=6;i++){  // lunes a sábado
         min-width:60px;
     ">
         <div><b>${dias[i]}</b></div>
-        <div style="font-size:16px;">${conteoSemana[i]}</div>
+        <div style="font-size:16px;">${valor}</div>
     </div>
     `;
 }
+
+// ✅ TARJETA TOTAL
+htmlSemana += `
+<div style="
+    background:#ff0000;
+    color:white;
+    padding:8px;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    font-size:12px;
+    text-align:center;
+    min-width:70px;
+">
+    <div><b>Total</b></div>
+    <div style="font-size:16px;">${totalSemana}</div>
+</div>
+`;
 
 document.getElementById("semanaData").innerHTML = htmlSemana;
 
