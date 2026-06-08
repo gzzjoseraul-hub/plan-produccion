@@ -25,6 +25,7 @@ body {
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:20px; /* ✅ AGREGA ESTA LINEA */
     box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -144,6 +145,37 @@ table.dataTable {
 .legend-avance { background:#ffff00; border:1px solid #aaa; }
 .legend-embarque { background:#ff6a00; }
 
+/* ===== OUTPUT HORIZONTAL ===== */
+.output-box {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:white;
+    padding:8px 12px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.output-box .item {
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+}
+
+.output-box input {
+    width:45px;
+    text-align:center;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+#fechaAyer {
+    color:#ff0000;
+    font-weight:bold;
+    margin-right:10px;
+}
+
 </style>
 </head>
 
@@ -159,7 +191,29 @@ table.dataTable {
     <!-- ✅ FECHA Y HORA -->
     <div id="datetime" style="font-size:14px; font-weight:bold;"></div>
     <div id="lastUpdate" style="font-size:12px; color:#666;"></div>
+<div class="output-box">
+    <div class="title" id="fechaAyer">OUTPUT</div>
 
+    <div class="item">
+        <label>Almacén</label>
+        <input type="number">
+    </div>
+
+    <div class="item">
+        <label>Incoming</label>
+        <input type="number">
+    </div>
+
+    <div class="item">
+        <label>Accesorado</label>
+        <input type="number">
+    </div>
+
+    <div class="item">
+        <label>Interiores</label>
+        <input type="number">
+    </div>
+    
 </div>
 
 <div class="container">
@@ -708,6 +762,21 @@ function actualizarFechaHora(){
 
 setInterval(actualizarFechaHora, 1000);
 actualizarFechaHora();
+
+// OUTPUT AYER
+function setAyer(){
+    let hoy = new Date();
+    hoy.setDate(hoy.getDate() - 1);
+
+    let d = String(hoy.getDate()).padStart(2,'0');
+    let m = String(hoy.getMonth()+1).padStart(2,'0');
+    let y = hoy.getFullYear();
+
+    document.getElementById("fechaAyer").innerText =
+        "OUTPUT " + d + "/" + m + "/" + y;
+}
+
+setAyer();
 
 </script>
 
