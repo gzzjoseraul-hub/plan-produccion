@@ -832,11 +832,9 @@ function setAyer(){
 
     let hoy = new Date();
 
-    // Si hoy es lunes (1), regresar a sábado (restar 2 días)
     if(hoy.getDay() === 1){
         hoy.setDate(hoy.getDate() - 2);
-    } 
-    else {
+    } else {
         hoy.setDate(hoy.getDate() - 1);
     }
 
@@ -844,8 +842,11 @@ function setAyer(){
     let m = String(hoy.getMonth()+1).padStart(2,'0');
     let y = hoy.getFullYear();
 
-    document.getElementById("fechaAyer").innerText =
-        "OUTPUT " + d + "/" + m + "/" + y;
+    let el = document.getElementById("fechaAyer");
+
+    if(el){
+        el.innerText = "OUTPUT " + d + "/" + m + "/" + y;
+    }
 }
 
 setAyer();
