@@ -832,6 +832,7 @@ function setAyer(){
 
     let hoy = new Date();
 
+    // Lunes → sábado
     if(hoy.getDay() === 1){
         hoy.setDate(hoy.getDate() - 2);
     } else {
@@ -849,10 +850,13 @@ function setAyer(){
     }
 }
 
-// ✅ ESTA LÍNEA FALTABA
-setAyer();
+// ✅ EJECUCIÓN SEGURA
+document.addEventListener("DOMContentLoaded", () => {
+    setAyer();
+    setTimeout(setAyer, 500); // refuerzo (clave en tu caso)
+});
 
-// ✅ esto lo puedes dejar
+// ✅ ACTUALIZACIÓN AUTOMÁTICA
 setInterval(setAyer, 30000);
 
 </script>
