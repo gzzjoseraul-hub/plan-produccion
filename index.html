@@ -441,7 +441,7 @@ onSnapshot(doc(db,"output","ayer"), (docSnap)=>{
 
         $("#outAlmacen").val(d.almacen || "");
         $("#outIncoming").val(d.incoming || "");
-        $("#outAccesorado").val(d.accesoriado || "");
+        $("#outAccesorizado").val(d.accesorizado || "");
         $("#outInteriores").val(d.interiores || "");
     }
 });
@@ -663,12 +663,12 @@ $(document).on("change",".comment-box, .estado, .afectacion", async function(){
 // ✅ ✅ ✅ PEGA JUSTO AQUÍ ↓↓↓
 
 // GUARDAR OUTPUT
-$("#outAlmacen, #outIncoming, #outAccesorado, #outInteriores").on("input", async function(){
+$("#outAlmacen, #outIncoming, #outAccesorizado, #outInteriores").on("input", async function(){
 
     await setDoc(doc(db,"output","ayer"),{
         almacen: $("#outAlmacen").val() || "",
         incoming: $("#outIncoming").val() || "",
-        accesoriado: $("#outAccesorado").val() || "",
+        accesorizado: $("#outAccesorizado").val() || "",
         interiores: $("#outInteriores").val() || ""
     });
 
