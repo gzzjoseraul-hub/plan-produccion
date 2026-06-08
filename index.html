@@ -813,8 +813,16 @@ actualizarFechaHora();
 
 // OUTPUT AYER
 function setAyer(){
+
     let hoy = new Date();
-    hoy.setDate(hoy.getDate() - 1);
+
+    // Si hoy es lunes (1), regresar a sábado (restar 2 días)
+    if(hoy.getDay() === 1){
+        hoy.setDate(hoy.getDate() - 2);
+    } 
+    else {
+        hoy.setDate(hoy.getDate() - 1);
+    }
 
     let d = String(hoy.getDate()).padStart(2,'0');
     let m = String(hoy.getMonth()+1).padStart(2,'0');
