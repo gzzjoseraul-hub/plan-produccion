@@ -206,22 +206,22 @@ table.dataTable {
 
     <div class="item">
         <label>Almacén</label>
-        <input type="number">
+        <input type="number" id="outAlmacen">
     </div>
 
     <div class="item">
         <label>Incoming</label>
-        <input type="number">
+        <input type="number" id="outIncoming">
     </div>
 
     <div class="item">
-        <label>Accesorado</label>
-        <input type="number">
+        <label>Accesorizado</label>
+        <input type="number" id="outAccesorizado">
     </div>
 
     <div class="item">
         <label>Interiores</label>
-        <input type="number">
+        <input type="number" id="outInteriores">
     </div>
     
 </div> <!-- ✅ cierra OUTPUT -->
@@ -429,6 +429,25 @@ onSnapshot(collection(db,"comentarios"), snap=>{
 
     aplicarDatos();
 });
+
+// ✅ ✅ ✅ PEGA AQUÍ ↓↓↓
+
+// OUTPUT COMPARTIDO
+onSnapshot(doc(db,"output","ayer"), (docSnap)=>{
+
+    if(docSnap.exists()){
+
+        let d = docSnap.data();
+
+        $("#outAlmacen").val(d.almacen || "");
+        $("#outIncoming").val(d.incoming || "");
+        $("#outAccesorado").val(d.accesoriado || "");
+        $("#outInteriores").val(d.interiores || "");
+    }
+});
+
+// ✅ ✅ ✅ FIN
+
 
 // RENDER
 function renderTable(data){
@@ -639,6 +658,24 @@ $(document).on("change",".comment-box, .estado, .afectacion", async function(){
         afectacion: $(`select.afectacion[data-id='${id}']`).val() || ""
     });
 });
+
+
+// ✅ ✅ ✅ PEGA JUSTO AQUÍ ↓↓↓
+
+// GUARDAR OUTPUT
+$("#outAlmacen, #outIncoming, #outAccesorado, #outInteriores").on("input", async function(){
+
+    await setDoc(doc(db,"output","ayer"),{
+        almacen: $("#outAlmacen").val() || "",
+        incoming: $("#outIncoming").val() || "",
+        accesoriado: $("#outAccesorado").val() || "",
+        interiores: $("#outInteriores").val() || ""
+    });
+
+});
+
+// ✅ ✅ ✅ FIN DE BLOQUE
+
 
 // UPLOAD
 $("#upload").on("change",function(e){
