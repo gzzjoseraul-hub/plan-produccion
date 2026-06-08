@@ -813,22 +813,6 @@ $(document).on("click","#clearData", async function(){
 
 });
 
-    
-// ✅ 👇 PEGA AQUÍ LA FECHA Y HORA 👇
-
-function actualizarFechaHora(){
-
-    let ahora = new Date();
-
-    let fecha = ahora.toLocaleDateString();
-    let hora = ahora.toLocaleTimeString();
-
-    document.getElementById("datetime").innerHTML = fecha + " " + hora;
-}
-
-setInterval(actualizarFechaHora, 1000);
-actualizarFechaHora();
-
 // OUTPUT AYER
 function setAyer(){
 
