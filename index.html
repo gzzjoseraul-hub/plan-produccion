@@ -217,7 +217,9 @@ table.dataTable {
     <!-- DERECHA -->
     <div class="output-box">
 
-        <div id="fechaAyer">OUTPUT</div>
+        <div id="fechaAyer">
+        OUTPUT <span id="fechaTexto"></span>
+        </div>
 
         <div class="item">
             <label>Almacén</label>
@@ -832,7 +834,6 @@ function setAyer(){
 
     let hoy = new Date();
 
-    // Lunes → sábado
     if(hoy.getDay() === 1){
         hoy.setDate(hoy.getDate() - 2);
     } else {
@@ -843,10 +844,10 @@ function setAyer(){
     let m = String(hoy.getMonth()+1).padStart(2,'0');
     let y = hoy.getFullYear();
 
-    let el = document.getElementById("fechaAyer");
+    let span = document.getElementById("fechaTexto");
 
-    if(el){
-        el.innerText = "OUTPUT " + d + "/" + m + "/" + y;
+    if(span){
+        span.innerText = d + "/" + m + "/" + y;
     }
 }
 
