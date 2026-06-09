@@ -499,15 +499,15 @@ inicioSemana.setHours(0,0,0,0);
         let t=calcTiempo(rdd);
 
 // ✅ CONTAR POR SEMANA ACTUAL
-    if(fecha){
+if(fecha){
 
-        let f = new Date(fecha);
+    let partes = fecha.split("-");
+    let f = new Date(partes[0], partes[1]-1, partes[2]);
 
-        if(!isNaN(f) && f >= inicioSemana){
-    
-            let dia = f.getDay();
-            conteoSemana[dia]++;
+    if(!isNaN(f) && f >= inicioSemana && f <= hoy){
 
+        let dia = f.getDay();
+        conteoSemana[dia]++;
     }
 }
 
