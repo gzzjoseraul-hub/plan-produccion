@@ -196,6 +196,20 @@ table.dataTable {
     margin-right:10px;
 }
 
+.tabla-container {
+    max-height: 500px;   /* puedes ajustar */
+    overflow-y: auto;
+    border-radius:10px;
+}
+
+/* ✅ ENCABEZADO FIJO */
+#tabla thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+}
+    
 </style>
 </head>
 
@@ -348,7 +362,8 @@ table.dataTable {
 
 <br>
 
-<table id="tabla" class="display">
+<div class="tabla-container">
+    <table id="tabla" class="display">
 <thead>
 <tr>
 <th>Sales Order</th>
