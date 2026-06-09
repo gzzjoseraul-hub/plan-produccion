@@ -304,6 +304,15 @@ table.dataTable {
         </select>
     </div>
 
+ <!-- ✅ 4. NUEVO FILTRO MULTI ORDER -->
+    <div style="margin-bottom:10px;">
+        <label>Filtrar por múltiples Orders:</label><br>
+
+        <textarea id="filtroOrdenes" 
+                  placeholder="Pega aquí varias órdenes (una por línea)"
+                  style="width:300px; height:80px;"></textarea>
+    </div>
+
     <!-- 4. ✅ LEYENDA (AL FINAL) -->
     <div class="filtro-box">
 
@@ -649,10 +658,16 @@ function aplicarDatos(){
 
 // FILTROS
 function aplicarFiltros(){
+// FILTROS
+function aplicarFiltros(){
 
     let estado=$("#filtroEstado").val();
     let tiempo=$("#filtroTiempo").val();
     let fecha=$("#filtroFecha").val();
+
+    // ✅ NUEVO: Multi órdenes
+    let texto = $("#filtroOrdenes").val().trim();
+    let listaOrdenes = texto ? texto.split("\n").map(x => x.trim()) : [];
 
     $("#tabla tbody tr").each(function(){
 
@@ -663,6 +678,9 @@ function aplicarFiltros(){
         let af=$(this).find(".afectacion").val();
         let f=$(this).data("fecha");
 
+        let orden = $(this).find("td:eq(2)").text().trim(); // columna Order
+        let so = $(this).find("td:eq(0)").text().trim();    // Sales Order ✅
+
         if(estado && est!==estado) ok=false;
         if(fecha && f!==fecha) ok=false;
 
@@ -672,6 +690,13 @@ function aplicarFiltros(){
             if(tiempo && t!==tiempo) ok=false;
         }
 
+        // ✅ FILTRO MULTI (Order y Sales Order)
+        if(listaOrdenes.length > 0){
+            if(!listaOrdenes.includes(orden) && !listaOrdenes.includes(so)){
+                ok = false;
+            }
+        }
+
         $(this).toggle(ok);
     });
 
@@ -679,6 +704,9 @@ function aplicarFiltros(){
 }
 
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
+
+// ✅ ACTIVAR MULTI FILTRO EN TIEMPO REAL
+$("#filtroOrdenes").on("keyup", aplicarFiltros);
 
 // GUARDAR
 $(document).on("change",".comment-box, .estado, .afectacion", async function(){
