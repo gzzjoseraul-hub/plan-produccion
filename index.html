@@ -659,7 +659,10 @@ function aplicarDatos(){
 
 // FILTROS
 function aplicarFiltros(){
-
+    
+// ✅ NUEVO MULTI FILTRO
+    let texto = $("#filtroOrdenes").val().trim();
+    let listaOrdenes = texto ? texto.split(/\n|,|\t/).map(x => x.trim()) : [];
     let estado=$("#filtroEstado").val();
     let tiempo=$("#filtroTiempo").val();
     let fecha=$("#filtroFecha").val();
@@ -672,6 +675,8 @@ function aplicarFiltros(){
         let t=$(this).data("tiempo");
         let af=$(this).find(".afectacion").val();
         let f=$(this).data("fecha");
+        let orden = $(this).find("td:eq(2)").text().trim();
+        let so = $(this).find("td:eq(0)").text().trim();
 
         if(estado && est!==estado) ok=false;
         if(fecha && f!==fecha) ok=false;
@@ -681,7 +686,12 @@ function aplicarFiltros(){
         } else {
             if(tiempo && t!==tiempo) ok=false;
         }
-
+// ✅ FILTRO MULTI ORDEN
+        if(listaOrdenes.length > 0){
+        if(!listaOrdenes.includes(orden) && !listaOrdenes.includes(so)){
+        ok = false;
+    }
+}
         $(this).toggle(ok);
     });
 
@@ -689,6 +699,8 @@ function aplicarFiltros(){
 }
 
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
+    // ✅ ACTIVAR FILTRO MULTI
+$("#filtroOrdenes").on("keyup", aplicarFiltros);
 
 // GUARDAR
 $(document).on("change",".comment-box, .estado, .afectacion", async function(){
