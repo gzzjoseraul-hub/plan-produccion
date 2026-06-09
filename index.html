@@ -700,7 +700,7 @@ function aplicarFiltros(){
 
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
     // ✅ ACTIVAR FILTRO MULTI
-$("#filtroOrdenes").on("keyup", aplicarFiltros);
+$("#filtroOrdenes").on("input", aplicarFiltros);
 
 // GUARDAR
 $(document).on("change",".comment-box, .estado, .afectacion", async function(){
