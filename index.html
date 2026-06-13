@@ -78,7 +78,7 @@ button {
 ========================= */
 .dashboard-main {
     display:grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap:16px;
     margin-bottom:16px;
 }
@@ -117,6 +117,14 @@ button {
 
 .dashboard-card.overdue .dashboard-card-value {
     color:#E60000;
+}
+
+.dashboard-card.complete {
+    background:#f4fff4;
+}
+
+.dashboard-card.complete .dashboard-card-value {
+    color:#008000;
 }
 
 /* =========================
@@ -172,9 +180,10 @@ button {
 
 /* =========================
    OUTPUT DENTRO DE SEMANA
+   4 CAMPOS HORIZONTALES
 ========================= */
 .output-week {
-    width:330px;
+    width:720px;
     background:#E60000;
     color:white;
     border-radius:14px;
@@ -192,7 +201,7 @@ button {
 
 .output-week-grid {
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(4, 1fr);
     gap:8px;
 }
 
@@ -203,12 +212,14 @@ button {
     display:flex;
     flex-direction:column;
     gap:2px;
+    min-width:0;
 }
 
 .output-week-field label {
     color:#555;
     font-size:11px;
     font-weight:bold;
+    white-space:nowrap;
 }
 
 .output-week-field input {
@@ -339,9 +350,9 @@ table.dataTable {
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width:1200px) {
+@media (max-width:1400px) {
     .dashboard-main {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .week-row {
@@ -351,6 +362,16 @@ table.dataTable {
 
     .output-week {
         width:100%;
+    }
+}
+
+@media (max-width:900px) {
+    .dashboard-main {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .output-week-grid {
+        grid-template-columns:repeat(2, 1fr);
     }
 }
 
@@ -409,6 +430,11 @@ table.dataTable {
     <div class="dashboard-card">
         <div class="dashboard-card-title">Afectadas</div>
         <div class="dashboard-card-value" id="totalAfectadas">0</div>
+    </div>
+
+    <div class="dashboard-card complete">
+        <div class="dashboard-card-title">Órdenes completas</div>
+        <div class="dashboard-card-value" id="totalCompletas">0</div>
     </div>
 
 </div>
@@ -983,10 +1009,14 @@ function calcularKPIs(){
         if($(this).find(".afectacion").val()) afectadas++;
     });
 
+    let completas = c - afectadas;
+    if(completas < 0) completas = 0;
+
     $("#totalMonto").text(money(total));
     $("#totalOverdue").text(money(overdue));
     $("#totalOrders").text(c);
     $("#totalAfectadas").text(afectadas);
+    $("#totalCompletas").text(completas);
 }
 
 // LIMPIAR
