@@ -25,12 +25,12 @@ body {
 }
 
 /* =========================
-   HEADER ABB ROJO
+   HEADER ABB ROJO - COMPACTO
 ========================= */
 .main-header {
     background:#E60000;
     color:white;
-    padding:18px 30px;
+    padding:12px 30px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -38,19 +38,19 @@ body {
 }
 
 .header-title {
-    font-size:28px;
+    font-size:25px;
     font-weight:bold;
     letter-spacing:.3px;
 }
 
 .header-update {
-    font-size:14px;
-    margin-top:6px;
+    font-size:13px;
+    margin-top:4px;
     font-weight:bold;
 }
 
 .header-logo {
-    font-size:58px;
+    font-size:48px;
     font-weight:bold;
     opacity:.95;
 }
@@ -78,7 +78,7 @@ button {
 ========================= */
 .dashboard-main {
     display:grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap:16px;
     margin-bottom:16px;
 }
@@ -87,8 +87,8 @@ button {
     background:white;
     border-radius:16px;
     box-shadow:0 4px 14px rgba(0,0,0,0.10);
-    height:145px;
-    padding:18px 20px;
+    height:120px;
+    padding:15px 20px;
     box-sizing:border-box;
     border-top:6px solid #E60000;
     display:flex;
@@ -101,12 +101,12 @@ button {
     font-weight:bold;
     color:#444;
     text-transform:uppercase;
-    letter-spacing:.4px;
-    margin-bottom:10px;
+    letter-spacing:0.4px;
+    margin-bottom:8px;
 }
 
 .dashboard-card-value {
-    font-size:28px;
+    font-size:26px;
     font-weight:bold;
     color:#000;
 }
@@ -120,56 +120,7 @@ button {
 }
 
 /* =========================
-   OUTPUT COMO KPI
-========================= */
-.output-dashboard {
-    background:#E60000;
-    color:white;
-    border-top:6px solid #9f0000;
-}
-
-.output-dashboard .dashboard-card-title {
-    color:white;
-    text-align:center;
-    font-size:16px;
-    margin-bottom:10px;
-}
-
-.output-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-}
-
-.output-field {
-    background:white;
-    border-radius:9px;
-    padding:6px;
-    display:flex;
-    flex-direction:column;
-    gap:3px;
-}
-
-.output-field label {
-    color:#555;
-    font-size:11px;
-    font-weight:bold;
-}
-
-.output-field input {
-    border:none;
-    outline:none;
-    text-align:center;
-    color:#E60000;
-    font-size:17px;
-    font-weight:bold;
-    width:100%;
-    background:transparent;
-    box-sizing:border-box;
-}
-
-/* =========================
-   SEMANA
+   SEMANA + OUTPUT
 ========================= */
 .week-dashboard {
     background:white;
@@ -178,6 +129,17 @@ button {
     border-left:6px solid #E60000;
     padding:16px 18px;
     margin-bottom:16px;
+}
+
+.week-row {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+.week-left {
+    flex:1;
 }
 
 .week-title {
@@ -206,6 +168,59 @@ button {
     color:#E60000 !important;
     background:#fff5f5 !important;
     font-weight:bold !important;
+}
+
+/* =========================
+   OUTPUT DENTRO DE SEMANA
+========================= */
+.output-week {
+    width:330px;
+    background:#E60000;
+    color:white;
+    border-radius:14px;
+    padding:12px 14px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.15);
+    box-sizing:border-box;
+}
+
+.output-week-title {
+    font-size:16px;
+    font-weight:bold;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.output-week-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.output-week-field {
+    background:white;
+    border-radius:9px;
+    padding:6px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.output-week-field label {
+    color:#555;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.output-week-field input {
+    border:none;
+    outline:none;
+    text-align:center;
+    color:#E60000;
+    font-size:17px;
+    font-weight:bold;
+    width:100%;
+    background:transparent;
+    box-sizing:border-box;
 }
 
 /* =========================
@@ -328,6 +343,15 @@ table.dataTable {
     .dashboard-main {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .week-row {
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .output-week {
+        width:100%;
+    }
 }
 
 @media (max-width:700px) {
@@ -387,45 +411,55 @@ table.dataTable {
         <div class="dashboard-card-value" id="totalAfectadas">0</div>
     </div>
 
-    <div class="dashboard-card output-dashboard">
-        <div class="dashboard-card-title">
-            OUTPUT <span id="fechaTexto"></span>
+</div>
+
+<!-- SEMANA + OUTPUT -->
+<div class="week-dashboard">
+
+    <div class="week-row">
+
+        <div class="week-left">
+            <div class="week-title">Órdenes liberadas en la semana</div>
+            <div id="semanaData"></div>
         </div>
 
-        <div class="output-grid">
+        <div class="output-week">
 
-            <div class="output-field">
-                <label>Almacén</label>
-                <input type="number" id="outAlmacen">
+            <div class="output-week-title">
+                OUTPUT <span id="fechaTexto"></span>
             </div>
 
-            <div class="output-field">
-                <label>Incoming</label>
-                <input type="number" id="outIncoming">
-            </div>
+            <div class="output-week-grid">
 
-            <div class="output-field">
-                <label>Accesorizado</label>
-                <input type="number" id="outAccesorizado">
-            </div>
+                <div class="output-week-field">
+                    <label>Almacén</label>
+                    <input type="number" id="outAlmacen">
+                </div>
 
-            <div class="output-field">
-                <label>Interiores</label>
-                <input type="number" id="outInteriores">
+                <div class="output-week-field">
+                    <label>Incoming</label>
+                    <input type="number" id="outIncoming">
+                </div>
+
+                <div class="output-week-field">
+                    <label>Accesorizado</label>
+                    <input type="number" id="outAccesorizado">
+                </div>
+
+                <div class="output-week-field">
+                    <label>Interiores</label>
+                    <input type="number" id="outInteriores">
+                </div>
+
             </div>
 
         </div>
+
     </div>
 
 </div>
 
-<!-- SEMANA -->
-<div class="week-dashboard">
-    <div class="week-title">Órdenes liberadas en la semana</div>
-    <div id="semanaData"></div>
-</div>
-
-<!-- FILTROS MOVIDOS ABAJO DE SEMANA -->
+<!-- FILTROS -->
 <div class="card">
     <div class="filtros">
 
