@@ -787,6 +787,20 @@ $(document).on("input", ".semana-input", function(){
 
 });
 
+// ✅ GUARDAR SEMANA
+$(document).on("input", ".semana-input", async function(){
+
+    let datos = {};
+
+    $(".semana-input").each(function(index){
+        datos["dia" + index] = $(this).val() || 0;
+    });
+
+    await setDoc(doc(db,"semana","datos"), datos);
+
+    });
+
+
 // GUARDAR
 $(document).on("change",".comment-box, .estado, .afectacion", async function(){
 
@@ -810,19 +824,6 @@ $("#outAlmacen, #outIncoming, #outAccesorizado, #outInteriores").on("input", asy
         incoming: $("#outIncoming").val() || "",
         accesorizado: $("#outAccesorizado").val() || "",
         interiores: $("#outInteriores").val() || ""
-    });
-
-// ✅ GUARDAR SEMANA
-$(document).on("input", ".semana-input", async function(){
-
-    let datos = {};
-
-    $(".semana-input").each(function(index){
-        datos["dia" + index] = $(this).val() || 0;
-    });
-
-    await setDoc(doc(db,"semana","datos"), datos);
-
     });
     
 });
