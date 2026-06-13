@@ -233,6 +233,161 @@ table.dataTable {
     background: white;
     z-index: 2;
 }
+
+/* ===== DASHBOARD PRO ABB ===== */
+
+.dashboard-board {
+    background:#ffffff;
+    border-radius:14px;
+    padding:18px;
+    margin-top:15px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.10);
+    border-left:6px solid #E60000;
+}
+
+.dashboard-top {
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:18px;
+    align-items:stretch;
+}
+
+.kpi-grid-pro {
+    display:grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap:16px;
+}
+
+.kpi-card-pro {
+    background:#ffffff;
+    border-radius:14px;
+    padding:18px 20px;
+    min-height:105px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.12);
+    border-top:6px solid #E60000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.kpi-card-pro .kpi-title {
+    font-size:13px;
+    color:#555;
+    font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    margin-bottom:8px;
+}
+
+.kpi-card-pro .kpi-value {
+    font-size:28px;
+    font-weight:bold;
+    color:#111;
+}
+
+.kpi-card-pro.overdue {
+    background:#fff1f1;
+    border-top-color:#E60000;
+}
+
+.kpi-card-pro.overdue .kpi-value {
+    color:#E60000;
+}
+
+.output-pro {
+    background:linear-gradient(135deg, #E60000, #b00000);
+    color:white;
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.18);
+}
+
+.output-pro-title {
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:14px;
+    text-align:center;
+}
+
+.output-pro-grid {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+}
+
+.output-pro-field {
+    background:white;
+    color:#111;
+    border-radius:10px;
+    padding:8px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.output-pro-field label {
+    font-size:11px;
+    color:#666;
+    font-weight:bold;
+}
+
+.output-pro-field input {
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    color:#E60000;
+    background:#fff;
+}
+
+.week-dashboard {
+    margin-top:18px;
+    background:#f8f8f8;
+    border-radius:12px;
+    padding:14px;
+    border:1px solid #eee;
+}
+
+.week-title {
+    font-size:13px;
+    color:#333;
+    font-weight:bold;
+    margin-bottom:10px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+}
+
+#semanaData {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.semana-input {
+    font-weight:bold !important;
+    border:2px solid #ddd !important;
+    border-radius:8px !important;
+}
+
+#totalSemana {
+    border:3px solid #E60000 !important;
+    color:#E60000 !important;
+    background:#fff5f5 !important;
+    font-weight:bold !important;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .dashboard-top {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-grid-pro {
+        grid-template-columns: repeat(2, minmax(160px, 1fr));
+    }
+}
     
 </style>
 </head>
@@ -350,75 +505,89 @@ align-items:center;
         </div>
 
     </div> <!-- ✅ cierre de filtros -->
+    </div> <!-- ✅ cierre de card filtros -->
 
-    <div class="card" style="margin-top:15px;">
+<div class="dashboard-board">
 
-<div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+    <div class="dashboard-top">
 
-    <!-- KPIs -->
-    <div style="display:flex; gap:15px; flex-wrap:wrap; flex:2;">
+        <!-- KPIs -->
+        <div class="kpi-grid-pro">
 
-        <div class="kpi-box">
-            <div>Total $</div>
-            <span id="totalMonto">$0</span>
+            <div class="kpi-card-pro">
+                <div class="kpi-title">Total $</div>
+                <span class="kpi-value" id="totalMonto">$0</span>
+            </div>
+
+            <div class="kpi-card-pro overdue">
+                <div class="kpi-title">Overdue $</div>
+                <span class="kpi-value" id="totalOverdue">$0</span>
+            </div>
+
+            <div class="kpi-card-pro">
+                <div class="kpi-title">Órdenes</div>
+                <span class="kpi-value" id="totalOrders">0</span>
+            </div>
+
+            <div class="kpi-card-pro">
+                <div class="kpi-title">Afectadas</div>
+                <span class="kpi-value" id="totalAfectadas">0</span>
+            </div>
+
         </div>
 
-        <div class="kpi-box">
-            <div>Overdue $</div>
-            <span id="totalOverdue">$0</span>
-        </div>
+        <!-- OUTPUT -->
+        <div class="output-pro">
 
-        <div class="kpi-box">
-            <div>Órdenes</div>
-            <span id="totalOrders">0</span>
-        </div>
+            <div class="output-pro-title">
+                OUTPUT <span id="fechaTexto"></span>
+            </div>
 
-        <div class="kpi-box">
-            <div>Afectadas</div>
-            <span id="totalAfectadas">0</span>
+            <div class="output-pro-grid">
+
+                <div class="output-pro-field">
+                    <label>Almacén</label>
+                    <input type="number" id="outAlmacen">
+                </div>
+
+                <div class="output-pro-field">
+                    <label>Incoming</label>
+                    <input type="number" id="outIncoming">
+                </div>
+
+                <div class="output-pro-field">
+                    <label>Accesorizado</label>
+                    <input type="number" id="outAccesorizado">
+                </div>
+
+                <div class="output-pro-field">
+                    <label>Interiores</label>
+                    <input type="number" id="outInteriores">
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <!-- OUTPUT -->
-    <div style="
-        background:#f7f7f7;
-        padding:15px;
-        border-radius:10px;
-        min-width:200px;
-    ">
+    <!-- SEMANA -->
+    <div class="week-dashboard">
 
-        <div style="font-weight:bold; margin-bottom:10px;">
-            OUTPUT <span id="fechaTexto"></span>
+        <div class="week-title">
+            Órdenes liberadas en la semana
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:6px;">
-            <input type="number" id="outAlmacen" placeholder="Almacén">
-            <input type="number" id="outIncoming" placeholder="Incoming">
-            <input type="number" id="outAccesorizado" placeholder="Accesorizado">
-            <input type="number" id="outInteriores" placeholder="Interiores">
-        </div>
+        <div id="semanaData"></div>
 
     </div>
-
-</div>
-
-</div>
-
-<div class="card" style="margin-top:15px;">
-
-    <div style="font-size:12px; color:#555; margin-bottom:10px;">
-        Órdenes liberadas en la semana
-    </div>
-
-    <div id="semanaData" style="display:flex; gap:10px;"></div>
 
 </div>
 
 <br>
-
 <div class="tabla-container">
-    <table id="tabla" class="display">
+
+<table id="tabla" class="display">
 <thead>
 <tr>
 <th>Sales Order</th>
@@ -435,7 +604,11 @@ align-items:center;
 <tbody></tbody>
 </table>
 
-</div>
+</div> <!-- cierra tabla-container -->
+
+</div> <!-- cierra div interno después de <br><br><div> -->
+
+</div> <!-- cierra container -->
 
 <script type="module">
 
