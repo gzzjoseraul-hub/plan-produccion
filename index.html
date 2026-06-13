@@ -29,13 +29,10 @@ body {
     box-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
 
-.header-output {
-    color:#E60000;
-    font-weight:bold;
-    font-size:16px;
-    margin-left:10px;
-    border-left:2px solid #E60000;
-    padding-left:10px;
+.header-left {
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
 .logo {
@@ -48,6 +45,15 @@ body {
     font-size:20px;
     font-weight:bold;
     margin-left:20px;
+}
+
+.header-output {
+    color:#E60000;
+    font-weight:bold;
+    font-size:16px;
+    margin-left:10px;
+    border-left:2px solid #E60000;
+    padding-left:14px;
 }
 
 /* CONTENIDO */
@@ -84,7 +90,8 @@ body {
     color:#555;
 }
 
-/* ===== DASHBOARD COMPACTO ===== */
+/* ===== DASHBOARD COMPACTO PROPORCIONADO ===== */
+
 .dashboard-main {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -97,7 +104,7 @@ body {
     background: white;
     border-radius: 14px;
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-    height: 118px;
+    height: 126px;
     padding: 14px 16px;
     box-sizing: border-box;
     border-top: 5px solid #E60000;
@@ -130,32 +137,35 @@ body {
     color: #E60000;
 }
 
-/* OUTPUT */
+/* OUTPUT AJUSTADO */
 .output-dashboard {
     background: #D90000;
     color: white;
     border-top: 5px solid #B00000;
-    padding: 12px 14px;
+    padding: 10px 12px;
+    overflow: hidden;
 }
 
 .output-dashboard .dashboard-card-title {
     color: white;
-    font-size: 17px;
+    font-size: 15px;
     text-align: center;
-    margin-bottom: 9px;
+    margin-bottom: 7px;
+    line-height: 1.1;
+    white-space: nowrap;
 }
 
 .output-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 7px;
+    gap: 6px;
 }
 
 .output-field {
     background: white;
-    border-radius: 9px;
-    padding: 5px 7px;
-    height: 38px;
+    border-radius: 8px;
+    padding: 4px 6px;
+    height: 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -165,7 +175,8 @@ body {
     color: #555;
     font-size: 10px;
     font-weight: bold;
-    margin-bottom: 1px;
+    margin-bottom: 0;
+    line-height: 1;
 }
 
 .output-field input {
@@ -173,11 +184,12 @@ body {
     outline: none;
     text-align: center;
     color: #E60000;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
     width: 100%;
     background: transparent;
     padding: 0;
+    line-height: 1;
 }
 
 /* SEMANA */
@@ -285,20 +297,18 @@ table.dataTable {
 .legend-avance { background:#ffff00; border:1px solid #aaa; }
 .legend-embarque { background:#ff6a00; }
 
-#fechaAyer {
-    color:#ff0000;
-    font-weight:bold;
-    margin-right:10px;
-}
-
 input::placeholder {
     text-align:center;
 }
 
 /* RESPONSIVE */
-@media (max-width: 1300px) {
+@media (max-width: 1350px) {
     .dashboard-main {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dashboard-card {
+        height: 126px;
     }
 }
 
@@ -309,7 +319,7 @@ input::placeholder {
 
     .dashboard-card {
         height: auto;
-        min-height: 105px;
+        min-height: 110px;
     }
 }
 
@@ -321,7 +331,7 @@ input::placeholder {
 <!-- HEADER -->
 <div class="header">
 
-    <div style="display:flex; align-items:center; gap:15px;">
+    <div class="header-left">
         <div class="logo">ABB</div>
         <div class="title">Plan de Producción</div>
         <div id="lastUpdate" class="header-output"></div>
@@ -574,7 +584,6 @@ onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
         if(data.lastUpdate){
 
             let fecha = new Date(data.lastUpdate);
-
             let texto = "Última actualización: " + fecha.toLocaleString();
 
             document.getElementById("lastUpdate").innerHTML = texto;
@@ -584,7 +593,9 @@ onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
 
 // FIREBASE USER DATA
 onSnapshot(collection(db,"comentarios"), snap=>{
-    cacheEstado={}; cacheComentarios={}; cacheAfectacion={};
+    cacheEstado={}; 
+    cacheComentarios={}; 
+    cacheAfectacion={};
 
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
