@@ -386,6 +386,107 @@ table.dataTable {
         gap:10px;
     }
 }
+/* =========================
+   FORZAR LAYOUT DE ESCRITORIO
+   Evita que las tarjetas se apilen
+========================= */
+
+/* Mantiene el ancho mínimo del dashboard completo */
+body {
+    min-width: 1750px;
+    overflow-x: auto;
+}
+
+/* Header y contenido mantienen misma proporción */
+.main-header,
+.container {
+    min-width: 1750px;
+    box-sizing: border-box;
+}
+
+/* KPIs siempre en una sola fila de 5 tarjetas */
+.dashboard-main {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 16px !important;
+    min-width: 1700px;
+}
+
+/* Evita que las tarjetas se deformen */
+.dashboard-card {
+    min-width: 0;
+}
+
+/* Semana + Output siempre horizontal */
+.week-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Mantiene semana del lado izquierdo */
+.week-left {
+    flex: 1 1 auto;
+    min-width: 820px;
+}
+
+/* Semana siempre en una sola línea */
+#semanaData {
+    flex-wrap: nowrap !important;
+}
+
+/* Output siempre a la derecha y horizontal */
+.output-week {
+    width: 900px !important;
+    flex: 0 0 900px !important;
+}
+
+/* Campos del OUTPUT siempre en 4 columnas */
+.output-week-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+/* Neutraliza comportamiento responsive anterior */
+@media (max-width:1400px) {
+    .dashboard-main {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+
+    .week-row {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+
+    .output-week {
+        width: 900px !important;
+        flex: 0 0 900px !important;
+    }
+
+    .output-week-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}
+
+@media (max-width:900px) {
+    .dashboard-main {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+
+    .output-week-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}
+
+@media (max-width:700px) {
+    .dashboard-main {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+
+    .main-header {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+}
 </style>
 </head>
 
