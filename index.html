@@ -489,6 +489,34 @@ onSnapshot(doc(db,"output","ayer"), (docSnap)=>{
     }
 });
 
+// ✅ CARGAR SEMANA DESDE FIREBASE
+onSnapshot(doc(db,"semana","datos"), (docSnap)=>{
+
+    if(docSnap.exists()){
+
+        let d = docSnap.data();
+
+        $(".semana-input").each(function(index){
+
+            if(d["dia"+index] !== undefined){
+                $(this).val(d["dia"+index]);
+            }
+
+        });
+
+        // ✅ recalcular total después de cargar
+        let total = 0;
+
+        $(".semana-input").each(function(){
+            total += parseInt($(this).val()) || 0;
+        });
+
+        $("#totalSemana").val(total);
+
+    }
+
+});
+
 // ✅ ✅ ✅ FIN
 
 
@@ -784,6 +812,19 @@ $("#outAlmacen, #outIncoming, #outAccesorizado, #outInteriores").on("input", asy
         interiores: $("#outInteriores").val() || ""
     });
 
+// ✅ GUARDAR SEMANA
+$(document).on("input", ".semana-input", async function(){
+
+    let datos = {};
+
+    $(".semana-input").each(function(index){
+        datos["dia" + index] = $(this).val() || 0;
+    });
+
+    await setDoc(doc(db,"semana","datos"), datos);
+
+    });
+    
 });
 
 // ✅ ✅ ✅ FIN DE BLOQUE
