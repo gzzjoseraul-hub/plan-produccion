@@ -351,33 +351,12 @@ align-items:center;
 
     </div> <!-- ✅ cierre de filtros -->
 
-    <!-- KPI -->
-<div class="card">
+    <div class="card" style="margin-top:15px;">
 
-<!-- OUTPUT + KPIs -->
 <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;">
 
-    <!-- OUTPUT -->
-    <div style="
-        background:#f0f0f0;
-        padding:15px;
-        border-radius:10px;
-        min-width:220px;
-    ">
-        <div style="font-weight:bold; margin-bottom:10px;">
-            OUTPUT <span id="fechaTexto"></span>
-        </div>
-
-        <div style="display:flex; flex-direction:column; gap:6px;">
-            <input type="number" id="outAlmacen" placeholder="Almacén">
-            <input type="number" id="outIncoming" placeholder="Incoming">
-            <input type="number" id="outAccesorizado" placeholder="Accesorizado">
-            <input type="number" id="outInteriores" placeholder="Interiores">
-        </div>
-    </div>
-
-    <!-- KPIs GRANDES -->
-    <div style="display:flex; gap:15px; flex-wrap:wrap;">
+    <!-- KPIs -->
+    <div style="display:flex; gap:15px; flex-wrap:wrap; flex:2;">
 
         <div class="kpi-box">
             <div>Total $</div>
@@ -401,18 +380,38 @@ align-items:center;
 
     </div>
 
+    <!-- OUTPUT -->
+    <div style="
+        background:#f7f7f7;
+        padding:15px;
+        border-radius:10px;
+        min-width:200px;
+    ">
+
+        <div style="font-weight:bold; margin-bottom:10px;">
+            OUTPUT <span id="fechaTexto"></span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+            <input type="number" id="outAlmacen" placeholder="Almacén">
+            <input type="number" id="outIncoming" placeholder="Incoming">
+            <input type="number" id="outAccesorizado" placeholder="Accesorizado">
+            <input type="number" id="outInteriores" placeholder="Interiores">
+        </div>
+
+    </div>
+
 </div>
 
-<!-- SEMANA -->
-<div style="margin-top:20px;">
+</div>
 
-    <div style="font-size:12px; color:#555; margin-bottom:8px;">
+<div class="card" style="margin-top:15px;">
+
+    <div style="font-size:12px; color:#555; margin-bottom:10px;">
         Órdenes liberadas en la semana
     </div>
 
     <div id="semanaData" style="display:flex; gap:10px;"></div>
-
-</div>
 
 </div>
 
