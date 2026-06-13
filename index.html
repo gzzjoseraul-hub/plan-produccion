@@ -13,6 +13,16 @@
 /* =========================
    BASE
 ========================= */
+* {
+    box-sizing:border-box;
+}
+
+html, body {
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin:0;
@@ -22,6 +32,8 @@ body {
 
 .container {
     padding:20px 30px;
+    width:100%;
+    max-width:100%;
 }
 
 /* =========================
@@ -35,6 +47,7 @@ body {
     justify-content:space-between;
     align-items:center;
     box-shadow:0 3px 10px rgba(0,0,0,0.18);
+    width:100%;
 }
 
 .header-title {
@@ -78,37 +91,44 @@ button {
 ========================= */
 .dashboard-main {
     display:grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap:16px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap:12px;
     margin-bottom:16px;
+    width:100%;
 }
 
 .dashboard-card {
     background:white;
     border-radius:16px;
     box-shadow:0 4px 14px rgba(0,0,0,0.10);
-    height:120px;
-    padding:15px 20px;
-    box-sizing:border-box;
+    height:112px;
+    padding:14px 16px;
     border-top:6px solid #E60000;
     display:flex;
     flex-direction:column;
     justify-content:center;
+    min-width:0;
 }
 
 .dashboard-card-title {
-    font-size:13px;
+    font-size:clamp(10px, 0.8vw, 13px);
     font-weight:bold;
     color:#444;
     text-transform:uppercase;
     letter-spacing:0.4px;
     margin-bottom:8px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .dashboard-card-value {
-    font-size:26px;
+    font-size:clamp(20px, 1.7vw, 26px);
     font-weight:bold;
     color:#000;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .dashboard-card.overdue {
@@ -137,17 +157,19 @@ button {
     border-left:6px solid #E60000;
     padding:16px 18px;
     margin-bottom:16px;
+    width:100%;
 }
 
 .week-row {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) minmax(430px, 0.85fr);
     gap:20px;
+    align-items:center;
+    width:100%;
 }
 
 .week-left {
-    flex:1;
+    min-width:0;
 }
 
 .week-title {
@@ -183,13 +205,13 @@ button {
    4 CAMPOS HORIZONTALES
 ========================= */
 .output-week {
-    width:720px;
+    width:100%;
     background:#E60000;
     color:white;
     border-radius:14px;
     padding:12px 14px;
     box-shadow:0 4px 14px rgba(0,0,0,0.15);
-    box-sizing:border-box;
+    min-width:0;
 }
 
 .output-week-title {
@@ -201,7 +223,7 @@ button {
 
 .output-week-grid {
     display:grid;
-    grid-template-columns:repeat(4, 1fr);
+    grid-template-columns:repeat(4, minmax(0, 1fr));
     gap:8px;
 }
 
@@ -220,6 +242,8 @@ button {
     font-size:11px;
     font-weight:bold;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .output-week-field input {
@@ -231,7 +255,6 @@ button {
     font-weight:bold;
     width:100%;
     background:transparent;
-    box-sizing:border-box;
 }
 
 /* =========================
@@ -306,16 +329,19 @@ button {
 ========================= */
 .tabla-container {
     max-height:500px;
-    overflow-y:auto;
+    overflow:auto;
     border-radius:10px;
     background:white;
     box-shadow:0 3px 10px rgba(0,0,0,0.08);
+    width:100%;
+    max-width:100%;
 }
 
 table.dataTable {
     background:white;
     border-radius:10px;
     overflow:hidden;
+    width:100% !important;
 }
 
 #tabla thead th {
@@ -348,143 +374,47 @@ table.dataTable {
 }
 
 /* =========================
-   RESPONSIVE
+   RESPONSIVE CONTROLADO
 ========================= */
-@media (max-width:1400px) {
-    .dashboard-main {
-        grid-template-columns: repeat(3, 1fr);
+@media (max-width:1100px) {
+    .dashboard-card {
+        height:105px;
+        padding:12px;
+    }
+
+    .dashboard-card-title {
+        font-size:10px;
+    }
+
+    .dashboard-card-value {
+        font-size:20px;
     }
 
     .week-row {
-        flex-direction:column;
-        align-items:stretch;
+        grid-template-columns:minmax(0, 1fr) minmax(360px, 0.75fr);
+        gap:14px;
     }
 
-    .output-week {
-        width:100%;
+    .output-week-field input {
+        font-size:15px;
+    }
+
+    .output-week-field label {
+        font-size:10px;
     }
 }
 
-@media (max-width:900px) {
+@media (max-width:850px) {
     .dashboard-main {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .output-week-grid {
-        grid-template-columns:repeat(2, 1fr);
-    }
-}
-
-@media (max-width:700px) {
-    .dashboard-main {
-        grid-template-columns: 1fr;
-    }
-
-    .main-header {
-        flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
-    }
-}
-/* =========================
-   FORZAR LAYOUT DE ESCRITORIO
-   Evita que las tarjetas se apilen
-========================= */
-
-/* Mantiene el ancho mínimo del dashboard completo */
-body {
-    min-width: 1750px;
-    overflow-x: auto;
-}
-
-/* Header y contenido mantienen misma proporción */
-.main-header,
-.container {
-    min-width: 1750px;
-    box-sizing: border-box;
-}
-
-/* KPIs siempre en una sola fila de 5 tarjetas */
-.dashboard-main {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    gap: 16px !important;
-    min-width: 1700px;
-}
-
-/* Evita que las tarjetas se deformen */
-.dashboard-card {
-    min-width: 0;
-}
-
-/* Semana + Output siempre horizontal */
-.week-row {
-    flex-direction: row !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-}
-
-/* Mantiene semana del lado izquierdo */
-.week-left {
-    flex: 1 1 auto;
-    min-width: 820px;
-}
-
-/* Semana siempre en una sola línea */
-#semanaData {
-    flex-wrap: nowrap !important;
-}
-
-/* Output siempre a la derecha y horizontal */
-.output-week {
-    width: 900px !important;
-    flex: 0 0 900px !important;
-}
-
-/* Campos del OUTPUT siempre en 4 columnas */
-.output-week-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-}
-
-/* Neutraliza comportamiento responsive anterior */
-@media (max-width:1400px) {
-    .dashboard-main {
-        grid-template-columns: repeat(5, 1fr) !important;
+        grid-template-columns:repeat(5, minmax(120px, 1fr));
     }
 
     .week-row {
-        flex-direction: row !important;
-        align-items: center !important;
-    }
-
-    .output-week {
-        width: 900px !important;
-        flex: 0 0 900px !important;
+        grid-template-columns:1fr;
     }
 
     .output-week-grid {
-        grid-template-columns: repeat(4, 1fr) !important;
-    }
-}
-
-@media (max-width:900px) {
-    .dashboard-main {
-        grid-template-columns: repeat(5, 1fr) !important;
-    }
-
-    .output-week-grid {
-        grid-template-columns: repeat(4, 1fr) !important;
-    }
-}
-
-@media (max-width:700px) {
-    .dashboard-main {
-        grid-template-columns: repeat(5, 1fr) !important;
-    }
-
-    .main-header {
-        flex-direction: row !important;
-        align-items: center !important;
+        grid-template-columns:repeat(4, minmax(0, 1fr));
     }
 }
 </style>
