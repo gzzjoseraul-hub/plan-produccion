@@ -591,20 +591,35 @@ for(let i=1;i<=6;i++){
     let valor = conteoSemana[i] || 0;
     totalSemana += valor;
 
-    htmlSemana += `
-    <div style="
-        background:white;
-        padding:8px;
-        border-radius:8px;
-        box-shadow:0 2px 6px rgba(0,0,0,0.1);
-        font-size:12px;
-        text-align:center;
-        min-width:60px;
-    ">
-        <div><b>${dias[i]}</b></div>
-        <div style="font-size:16px;">${valor}</div>
-    </div>
-    `;
+
+htmlSemana += `
+<div style="
+    background:white;
+    padding:8px;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    font-size:12px;
+    text-align:center;
+    min-width:60px;
+">
+
+    <div><b>${dias[i]}</b></div>
+
+    <input type="number"
+           class="semana-input"
+           value="${valor}"
+           min="0"
+           style="
+               width:50px;
+               text-align:center;
+               font-size:16px;
+               border-radius:6px;
+               border:1px solid #ccc;
+           ">
+
+</div>
+`;
+
 }
 
 // ✅ TARJETA TOTAL (SIN COLOR)
@@ -618,15 +633,44 @@ htmlSemana += `
     text-align:center;
     min-width:70px;
 ">
+
     <div><b>Total</b></div>
-    <div style="font-size:16px;">${totalSemana}</div>
+
+    <input type="number"
+           id="totalSemana"
+           readonly
+           style="
+               width:60px;
+               text-align:center;
+               font-size:16px;
+               border-radius:6px;
+               border:2px solid #E60000;
+               color:#E60000;
+               font-weight:bold;
+               background:#fff5f5;
+           ">
+
 </div>
 `;
 
+// ✅ PINTAR SEMANA EN PANTALLA
 document.getElementById("semanaData").innerHTML = htmlSemana;
 
-}
+// ✅ INICIALIZAR TOTAL
+setTimeout(() => {
 
+    let total = 0;
+
+    $(".semana-input").each(function(){
+        total += parseInt($(this).val()) || 0;
+    });
+
+    $("#totalSemana").val(total);
+
+}, 200);
+
+}
+    
 // APLICAR DATA
 function aplicarDatos(){
 
@@ -701,6 +745,19 @@ function aplicarFiltros(){
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
     // ✅ ACTIVAR FILTRO MULTI
 $("#filtroOrdenes").on("input", aplicarFiltros);
+
+// ✅ CALCULAR TOTAL SEMANA AUTOMÁTICO
+$(document).on("input", ".semana-input", function(){
+
+    let total = 0;
+
+    $(".semana-input").each(function(){
+        total += parseInt($(this).val()) || 0;
+    });
+
+    $("#totalSemana").val(total);
+
+});
 
 // GUARDAR
 $(document).on("change",".comment-box, .estado, .afectacion", async function(){
