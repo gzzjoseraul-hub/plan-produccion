@@ -591,21 +591,32 @@ for(let i=1;i<=6;i++){
     let valor = conteoSemana[i] || 0;
     totalSemana += valor;
 
-    htmlSemana += `
-    <div style="
-        background:white;
-        padding:8px;
-        border-radius:8px;
-        box-shadow:0 2px 6px rgba(0,0,0,0.1);
-        font-size:12px;
-        text-align:center;
-        min-width:60px;
-    ">
-        <div><b>${dias[i]}</b></div>
-        <div style="font-size:16px;">${valor}</div>
-    </div>
-    `;
-}
+htmlSemana += `
+<div style="
+    background:white;
+    padding:8px;
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    font-size:12px;
+    text-align:center;
+    min-width:60px;
+">
+
+    <div><b>${dias[i]}</b></div>
+
+    <input type="number" 
+           class="semana-input" 
+           data-dia="${i}"
+           style="
+               width:50px;
+               text-align:center;
+               font-size:16px;
+               border-radius:6px;
+               border:1px solid #ccc;
+           ">
+
+</div>
+`;
 
 // ✅ TARJETA TOTAL (SIN COLOR)
 htmlSemana += `
