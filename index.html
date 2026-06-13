@@ -10,75 +10,64 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-/* =========================
-   BASE
-========================= */
+
+/* BASE */
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     margin:0;
-    background:#edf0f4;
-    color:#222;
+    background:#f4f5f7;
 }
 
+/* HEADER ABB */
+.header {
+    background: white;
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-output {
+    color:#E60000;
+    font-weight:bold;
+    font-size:16px;
+    margin-left:10px;
+    border-left:2px solid #E60000;
+    padding-left:10px;
+}
+
+.logo {
+    font-size:32px;
+    font-weight:bold;
+    color:#ff0000;
+}
+
+.title {
+    font-size:20px;
+    font-weight:bold;
+    margin-left:20px;
+}
+
+/* CONTENIDO */
 .container {
     padding:20px 30px;
 }
 
-/* =========================
-   HEADER ABB
-========================= */
-.main-header {
-    background:#E60000;
-    color:white;
-    padding:20px 30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 3px 10px rgba(0,0,0,0.18);
-}
-
-.header-title {
-    font-size:26px;
-    font-weight:bold;
-    letter-spacing:.3px;
-}
-
-.header-update {
-    font-size:14px;
-    margin-top:5px;
-    opacity:.95;
-}
-
-.header-logo {
-    font-size:60px;
-    font-weight:bold;
-    opacity:.95;
-}
-
-/* =========================
-   BOTONES
-========================= */
-button {
-    cursor:pointer;
-}
-
-/* =========================
-   TARJETAS
-========================= */
+/* TARJETAS */
 .card {
     background:white;
     padding:15px;
-    border-radius:12px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
 }
 
-/* =========================
-   FILTROS
-========================= */
+/* FILTROS */
 .filtros {
     display:flex;
     gap:20px;
-    margin-bottom:5px;
+    margin-bottom:15px;
     flex-wrap:wrap;
     align-items:flex-start;
 }
@@ -92,33 +81,189 @@ button {
 .filtro-box label {
     margin-bottom:5px;
     font-weight:bold;
-    color:#444;
+    color:#555;
 }
 
-.filtro-box select,
-.filtro-box input,
-.filtro-box textarea {
-    border:1px solid #aaa;
-    border-radius:4px;
-    padding:4px;
-    font-size:13px;
+/* ===== DASHBOARD COMPACTO ===== */
+.dashboard-main {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: stretch;
 }
 
-#filtroOrdenes {
-    width:190px;
-    height:60px;
-    resize:none;
+.dashboard-card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    height: 118px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    border-top: 5px solid #E60000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* =========================
-   LEYENDA
-========================= */
+.dashboard-card-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+}
+
+.dashboard-card-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #111;
+    line-height: 1.1;
+}
+
+.dashboard-card.overdue-card {
+    background: #fff1f1;
+}
+
+.dashboard-card.overdue-card .dashboard-card-value {
+    color: #E60000;
+}
+
+/* OUTPUT */
+.output-dashboard {
+    background: #D90000;
+    color: white;
+    border-top: 5px solid #B00000;
+    padding: 12px 14px;
+}
+
+.output-dashboard .dashboard-card-title {
+    color: white;
+    font-size: 17px;
+    text-align: center;
+    margin-bottom: 9px;
+}
+
+.output-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.output-field {
+    background: white;
+    border-radius: 9px;
+    padding: 5px 7px;
+    height: 38px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.output-field label {
+    color: #555;
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 1px;
+}
+
+.output-field input {
+    border: none;
+    outline: none;
+    text-align: center;
+    color: #E60000;
+    font-size: 17px;
+    font-weight: bold;
+    width: 100%;
+    background: transparent;
+    padding: 0;
+}
+
+/* SEMANA */
+.week-dashboard {
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    border-left: 5px solid #E60000;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+}
+
+.week-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #222;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+#semanaData {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* KPI LEGACY */
+.kpis {
+    display:flex;
+    gap:15px;
+}
+
+.kpi {
+    background:#fff;
+    padding:10px 15px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    font-weight:bold;
+}
+
+/* COLORES TABLA */
+.urgente td:nth-child(-n+3) { 
+    background:#ff0000 !important; 
+    color:white; 
+}
+
+.consolidada td:nth-child(-n+3) { 
+    background:#00b4ff !important; 
+    color:white; 
+}
+
+.avance td:nth-child(-n+3) { 
+    background:#ffff00 !important; 
+}
+
+.embarque td:nth-child(-n+3) { 
+    background:#ff6a00 !important; 
+    color:white; 
+}
+
+/* TABLA */
+table.dataTable {
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.tabla-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius:10px;
+}
+
+#tabla thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+}
+
+/* LEYENDA */
 .legend {
     display:flex;
     gap:15px;
     flex-wrap:wrap;
-    align-items:center;
-    min-height:26px;
 }
 
 .legend-item {
@@ -130,8 +275,8 @@ button {
 }
 
 .legend-color {
-    width:14px;
-    height:14px;
+    width:12px;
+    height:12px;
     border-radius:50%;
 }
 
@@ -140,229 +285,48 @@ button {
 .legend-avance { background:#ffff00; border:1px solid #aaa; }
 .legend-embarque { background:#ff6a00; }
 
-/* =========================
-   DASHBOARD PRO
-========================= */
-.dashboard-board {
-    background:#ffffff;
-    border-radius:16px;
-    padding:18px;
-    margin-top:15px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.12);
-    border-left:7px solid #E60000;
-}
-
-.dashboard-top {
-    display:grid;
-    grid-template-columns: 1fr 320px;
-    gap:18px;
-    align-items:stretch;
-}
-
-.kpi-grid-pro {
-    display:grid;
-    grid-template-columns: repeat(4, minmax(150px, 1fr));
-    gap:16px;
-}
-
-.kpi-card-pro {
-    background:#ffffff;
-    border-radius:14px;
-    padding:18px 20px;
-    min-height:110px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.14);
-    border-top:6px solid #E60000;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-}
-
-.kpi-card-pro .kpi-title {
-    font-size:13px;
-    color:#555;
+#fechaAyer {
+    color:#ff0000;
     font-weight:bold;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-    margin-bottom:8px;
+    margin-right:10px;
 }
 
-.kpi-card-pro .kpi-value {
-    font-size:28px;
-    font-weight:bold;
-    color:#111;
-}
-
-.kpi-card-pro.overdue {
-    background:#fff1f1;
-    border-top-color:#E60000;
-}
-
-.kpi-card-pro.overdue .kpi-value {
-    color:#E60000;
-}
-
-/* =========================
-   OUTPUT
-========================= */
-.output-pro {
-    background:linear-gradient(135deg, #E60000, #9f0000);
-    color:white;
-    border-radius:14px;
-    padding:18px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.20);
-}
-
-.output-pro-title {
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:14px;
+input::placeholder {
     text-align:center;
 }
 
-.output-pro-grid {
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:10px;
-}
-
-.output-pro-field {
-    background:white;
-    color:#111;
-    border-radius:10px;
-    padding:8px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-}
-
-.output-pro-field label {
-    font-size:11px;
-    color:#666;
-    font-weight:bold;
-}
-
-.output-pro-field input {
-    width:100%;
-    box-sizing:border-box;
-    border:none;
-    outline:none;
-    font-size:18px;
-    font-weight:bold;
-    text-align:center;
-    color:#E60000;
-    background:#fff;
-}
-
-/* =========================
-   SEMANA
-========================= */
-.week-dashboard {
-    margin-top:18px;
-    background:#f8f8f8;
-    border-radius:12px;
-    padding:14px;
-    border:1px solid #e2e2e2;
-}
-
-.week-title {
-    font-size:13px;
-    color:#333;
-    font-weight:bold;
-    margin-bottom:10px;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-}
-
-#semanaData {
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.semana-input {
-    font-weight:bold !important;
-    border:2px solid #ddd !important;
-    border-radius:8px !important;
-}
-
-#totalSemana {
-    border:3px solid #E60000 !important;
-    color:#E60000 !important;
-    background:#fff5f5 !important;
-    font-weight:bold !important;
-}
-
-/* =========================
-   TABLA
-========================= */
-.tabla-container {
-    max-height:500px;
-    overflow-y:auto;
-    border-radius:10px;
-    background:white;
-    box-shadow:0 3px 10px rgba(0,0,0,0.08);
-}
-
-table.dataTable {
-    background:white;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-#tabla thead th {
-    position:sticky;
-    top:0;
-    background:white;
-    z-index:2;
-}
-
-/* =========================
-   COLORES DE FILAS
-========================= */
-.urgente td:nth-child(-n+3) {
-    background:#ff0000 !important;
-    color:white;
-}
-
-.consolidada td:nth-child(-n+3) {
-    background:#00b4ff !important;
-    color:white;
-}
-
-.avance td:nth-child(-n+3) {
-    background:#ffff00 !important;
-}
-
-.embarque td:nth-child(-n+3) {
-    background:#ff6a00 !important;
-    color:white;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width:1100px) {
-    .dashboard-top {
-        grid-template-columns:1fr;
-    }
-
-    .kpi-grid-pro {
-        grid-template-columns:repeat(2, minmax(160px, 1fr));
+/* RESPONSIVE */
+@media (max-width: 1300px) {
+    .dashboard-main {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
+
+@media (max-width: 800px) {
+    .dashboard-main {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-card {
+        height: auto;
+        min-height: 105px;
+    }
+}
+
 </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
-<div class="main-header">
-    <div>
-        <div class="header-title">PLAN DE PRODUCCIÓN RG INTERIORES</div>
-        <div id="lastUpdate" class="header-update"></div>
+<div class="header">
+
+    <div style="display:flex; align-items:center; gap:15px;">
+        <div class="logo">ABB</div>
+        <div class="title">Plan de Producción</div>
+        <div id="lastUpdate" class="header-output"></div>
     </div>
 
-    <div class="header-logo">ABB</div>
 </div>
 
 <div class="container">
@@ -408,6 +372,7 @@ table.dataTable {
             <label>Estados</label>
 
             <div class="legend">
+
                 <div class="legend-item">
                     <div class="legend-color legend-urgente"></div>
                     <span>Urgente</span>
@@ -427,93 +392,83 @@ table.dataTable {
                     <div class="legend-color legend-embarque"></div>
                     <span>MAX EMBARQUE</span>
                 </div>
+
             </div>
         </div>
 
         <div class="filtro-box">
             <label>Multi Orders</label>
-            <textarea id="filtroOrdenes" placeholder="Una orden por línea"></textarea>
+            <textarea id="filtroOrdenes" 
+                      placeholder="Una orden por línea"
+                      style="width:180px; height:60px; resize:none;"></textarea>
         </div>
 
     </div>
-</div>
-
-<!-- DASHBOARD -->
-<div class="dashboard-board">
-
-    <div class="dashboard-top">
-
-        <!-- KPIs -->
-        <div class="kpi-grid-pro">
-
-            <div class="kpi-card-pro">
-                <div class="kpi-title">Total $</div>
-                <span class="kpi-value" id="totalMonto">$0</span>
-            </div>
-
-            <div class="kpi-card-pro overdue">
-                <div class="kpi-title">Overdue $</div>
-                <span class="kpi-value" id="totalOverdue">$0</span>
-            </div>
-
-            <div class="kpi-card-pro">
-                <div class="kpi-title">Órdenes</div>
-                <span class="kpi-value" id="totalOrders">0</span>
-            </div>
-
-            <div class="kpi-card-pro">
-                <div class="kpi-title">Afectadas</div>
-                <span class="kpi-value" id="totalAfectadas">0</span>
-            </div>
-
-        </div>
-
-        <!-- OUTPUT -->
-        <div class="output-pro">
-
-            <div class="output-pro-title">
-                OUTPUT <span id="fechaTexto"></span>
-            </div>
-
-            <div class="output-pro-grid">
-
-                <div class="output-pro-field">
-                    <label>Almacén</label>
-                    <input type="number" id="outAlmacen">
-                </div>
-
-                <div class="output-pro-field">
-                    <label>Incoming</label>
-                    <input type="number" id="outIncoming">
-                </div>
-
-                <div class="output-pro-field">
-                    <label>Accesorizado</label>
-                    <input type="number" id="outAccesorizado">
-                </div>
-
-                <div class="output-pro-field">
-                    <label>Interiores</label>
-                    <input type="number" id="outInteriores">
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- SEMANA -->
-    <div class="week-dashboard">
-        <div class="week-title">Órdenes liberadas en la semana</div>
-        <div id="semanaData"></div>
-    </div>
-
 </div>
 
 <br>
 
-<!-- TABLA -->
+<!-- DASHBOARD PRINCIPAL -->
+<div class="dashboard-main">
+
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">Total $</div>
+        <div class="dashboard-card-value" id="totalMonto">$0</div>
+    </div>
+
+    <div class="dashboard-card overdue-card">
+        <div class="dashboard-card-title">Overdue $</div>
+        <div class="dashboard-card-value" id="totalOverdue">$0</div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">Órdenes</div>
+        <div class="dashboard-card-value" id="totalOrders">0</div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="dashboard-card-title">Afectadas</div>
+        <div class="dashboard-card-value" id="totalAfectadas">0</div>
+    </div>
+
+    <div class="dashboard-card output-dashboard">
+        <div class="dashboard-card-title">
+            OUTPUT <span id="fechaTexto"></span>
+        </div>
+
+        <div class="output-grid">
+
+            <div class="output-field">
+                <label>Almacén</label>
+                <input type="number" id="outAlmacen">
+            </div>
+
+            <div class="output-field">
+                <label>Incoming</label>
+                <input type="number" id="outIncoming">
+            </div>
+
+            <div class="output-field">
+                <label>Accesorizado</label>
+                <input type="number" id="outAccesorizado">
+            </div>
+
+            <div class="output-field">
+                <label>Interiores</label>
+                <input type="number" id="outInteriores">
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- SEMANA -->
+<div class="week-dashboard">
+    <div class="week-title">Órdenes liberadas en la semana</div>
+    <div id="semanaData"></div>
+</div>
+
 <div class="tabla-container">
     <table id="tabla" class="display">
         <thead>
@@ -550,6 +505,11 @@ const db = getFirestore(app);
 const ADMIN = true;
 const PASSWORD = "835755";
 
+let cacheEstado = {};
+let cacheComentarios = {};
+let cacheAfectacion = {};
+let semanaCache = null;
+
 $(document).ready(function(){
 
     if(ADMIN){
@@ -558,11 +518,6 @@ $(document).ready(function(){
     }
 
 });
-
-let cacheEstado = {};
-let cacheComentarios = {};
-let cacheAfectacion = {};
-let cacheSemana = null;
 
 // UTILIDADES
 function excelToDate(v){
@@ -584,7 +539,31 @@ function calcTiempo(r){
     return "entiempo";
 }
 
-// DATA
+function recalcularTotalSemana(){
+    let total = 0;
+
+    $(".semana-input").each(function(){
+        total += parseInt($(this).val()) || 0;
+    });
+
+    $("#totalSemana").val(total);
+}
+
+function aplicarSemanaFirebase(){
+    if(!semanaCache) return;
+
+    $(".semana-input").each(function(){
+        let dia = $(this).data("dia");
+
+        if(semanaCache["dia"+dia] !== undefined){
+            $(this).val(semanaCache["dia"+dia]);
+        }
+    });
+
+    recalcularTotalSemana();
+}
+
+// DATA PLAN
 onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
     if(docSnap.exists()){
 
@@ -593,8 +572,11 @@ onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
         renderTable(data.data);
 
         if(data.lastUpdate){
+
             let fecha = new Date(data.lastUpdate);
+
             let texto = "Última actualización: " + fecha.toLocaleString();
+
             document.getElementById("lastUpdate").innerHTML = texto;
         }
     }
@@ -602,9 +584,7 @@ onSnapshot(doc(db,"data_plan","plan"), (docSnap)=>{
 
 // FIREBASE USER DATA
 onSnapshot(collection(db,"comentarios"), snap=>{
-    cacheEstado={};
-    cacheComentarios={};
-    cacheAfectacion={};
+    cacheEstado={}; cacheComentarios={}; cacheAfectacion={};
 
     snap.forEach(d=>{
         cacheComentarios[d.id]=d.data().comentario||"";
@@ -629,12 +609,12 @@ onSnapshot(doc(db,"output","ayer"), (docSnap)=>{
     }
 });
 
-// SEMANA DESDE FIREBASE
+// SEMANA FIREBASE
 onSnapshot(doc(db,"semana","datos"), (docSnap)=>{
 
     if(docSnap.exists()){
-        cacheSemana = docSnap.data();
-        aplicarSemanaGuardada();
+        semanaCache = docSnap.data();
+        aplicarSemanaFirebase();
     }
 
 });
@@ -662,11 +642,11 @@ function renderTable(data){
     data.forEach(r=>{
         let so = r["Sales Order"] || "";
         let item = r["Sales order item"] || "";
-        let id = r["Order"];
-        let monto = r["Monto"] || 0;
-        let fecha = excelToDate(r["Release date (actual)"]);
-        let rdd = excelToDate(r["RDD"]);
-        let t = calcTiempo(rdd);
+        let id=r["Order"];
+        let monto=r["Monto"]||0;
+        let fecha=excelToDate(r["Release date (actual)"]);
+        let rdd=excelToDate(r["RDD"]);
+        let t=calcTiempo(rdd);
 
         if(fecha){
 
@@ -729,49 +709,54 @@ function renderTable(data){
 
     for(let i=1;i<=6;i++){
 
-        let valor = conteoSemana[i] || 0;
-
         htmlSemana += `
 <div style="
     background:white;
     padding:8px;
-    border-radius:8px;
+    border-radius:10px;
     box-shadow:0 2px 6px rgba(0,0,0,0.1);
     font-size:12px;
     text-align:center;
-    min-width:60px;
+    min-width:82px;
 ">
+
     <div><b>${dias[i]}</b></div>
+
     <input type="number"
            class="semana-input"
-           value="${valor}"
+           data-dia="${i}"
+           value="0"
            min="0"
            style="
-               width:50px;
+               width:55px;
                text-align:center;
                font-size:16px;
                border-radius:6px;
                border:1px solid #ccc;
            ">
-</div>`;
+
+</div>
+`;
     }
 
     htmlSemana += `
 <div style="
     background:white;
     padding:8px;
-    border-radius:8px;
+    border-radius:10px;
     box-shadow:0 2px 6px rgba(0,0,0,0.1);
     font-size:12px;
     text-align:center;
-    min-width:70px;
+    min-width:92px;
 ">
+
     <div><b>Total</b></div>
+
     <input type="number"
            id="totalSemana"
            readonly
            style="
-               width:60px;
+               width:62px;
                text-align:center;
                font-size:16px;
                border-radius:6px;
@@ -780,14 +765,14 @@ function renderTable(data){
                font-weight:bold;
                background:#fff5f5;
            ">
-</div>`;
+
+</div>
+`;
 
     document.getElementById("semanaData").innerHTML = htmlSemana;
 
-    setTimeout(() => {
-        aplicarSemanaGuardada();
-        recalcularTotalSemana();
-    }, 200);
+    aplicarSemanaFirebase();
+    recalcularTotalSemana();
 }
 
 // APLICAR DATA
@@ -811,7 +796,6 @@ function aplicarDatos(){
 
         let t=$(this).data("tiempo");
         $(this).removeClass("overdue servicio entiempo");
-
         if(t) $(this).addClass(t);
 
     });
@@ -819,36 +803,9 @@ function aplicarDatos(){
     calcularKPIs();
 }
 
-// SEMANA
-function recalcularTotalSemana(){
-
-    let total = 0;
-
-    $(".semana-input").each(function(){
-        total += parseInt($(this).val()) || 0;
-    });
-
-    $("#totalSemana").val(total);
-}
-
-function aplicarSemanaGuardada(){
-
-    if(!cacheSemana) return;
-
-    $(".semana-input").each(function(index){
-
-        if(cacheSemana["dia" + index] !== undefined){
-            $(this).val(cacheSemana["dia" + index]);
-        }
-
-    });
-
-    recalcularTotalSemana();
-}
-
 // FILTROS
 function aplicarFiltros(){
-
+    
     let texto = $("#filtroOrdenes").val().trim();
     let listaOrdenes = texto ? texto.split(/\n|,|\t/).map(x => x.trim()).filter(x => x !== "") : [];
 
@@ -891,21 +848,22 @@ function aplicarFiltros(){
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
 $("#filtroOrdenes").on("input", aplicarFiltros);
 
-// TOTAL SEMANA
-$(document).on("input", ".semana-input", function(){
-    recalcularTotalSemana();
-});
-
-// GUARDAR SEMANA
+// SEMANA MANUAL + FIREBASE
 $(document).on("input", ".semana-input", async function(){
+
+    recalcularTotalSemana();
 
     let datos = {};
 
-    $(".semana-input").each(function(index){
-        datos["dia" + index] = $(this).val() || 0;
+    $(".semana-input").each(function(){
+        let dia = $(this).data("dia");
+        datos["dia"+dia] = $(this).val() || 0;
     });
 
+    datos.total = $("#totalSemana").val() || 0;
+
     await setDoc(doc(db,"semana","datos"), datos);
+
 });
 
 // GUARDAR COMENTARIOS
@@ -929,6 +887,7 @@ $("#outAlmacen, #outIncoming, #outAccesorizado, #outInteriores").on("input", asy
         accesorizado: $("#outAccesorizado").val() || "",
         interiores: $("#outInteriores").val() || ""
     });
+
 });
 
 // UPLOAD
@@ -945,6 +904,7 @@ $("#upload").on("change",function(e){
             data: json,
             lastUpdate: new Date().toISOString()
         });
+
     };
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -953,10 +913,7 @@ $("#upload").on("change",function(e){
 // KPI
 function calcularKPIs(){
 
-    let total=0;
-    let overdue=0;
-    let c=0;
-    let afectadas=0;
+    let total=0, overdue=0, c=0, afectadas=0;
 
     $("#tabla tbody tr:visible").each(function(){
 
@@ -964,9 +921,7 @@ function calcularKPIs(){
         let t=$(this).data("tiempo");
 
         total+=monto;
-
         if(t==="overdue") overdue+=monto;
-
         c++;
 
         if($(this).find(".afectacion").val()) afectadas++;
@@ -978,7 +933,7 @@ function calcularKPIs(){
     $("#totalAfectadas").text(afectadas);
 }
 
-// LIMPIAR
+// LIMPIAR DATOS
 $(document).on("click","#clearData", async function(){
 
     let pass = prompt("Ingresa la clave:");
@@ -1006,6 +961,7 @@ $(document).on("click","#clearData", async function(){
                 },
                 { merge: true }
             );
+
         }
 
         alert("Comentarios y afectaciones limpiados");
@@ -1014,6 +970,7 @@ $(document).on("click","#clearData", async function(){
 
         console.error(e);
         alert("Error al limpiar");
+
     }
 
 });
@@ -1038,14 +995,15 @@ $(document).on("click","#downloadExcel", function(){
             "Afectación": row.find(".afectacion").val() || "",
             "Comentario": row.find(".comment-box").val() || ""
         });
+
     });
 
     let ws = XLSX.utils.json_to_sheet(dataExport);
     let wb = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(wb, ws, "Datos");
 
     XLSX.writeFile(wb, "PlanProduccion.xlsx");
+
 });
 
 // OUTPUT AYER
