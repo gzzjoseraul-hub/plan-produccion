@@ -140,6 +140,30 @@ button {
     color:#008000;
 }
 
+/* BOTONES EN TITULOS KPI */
+.kpi-filter-btn {
+    background:transparent;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    font:inherit;
+    color:#444;
+    text-transform:uppercase;
+    letter-spacing:0.2px;
+    width:100%;
+    text-align:center;
+}
+
+.kpi-filter-btn:hover {
+    color:#E60000;
+    text-decoration:underline;
+}
+
+.kpi-filter-btn.active {
+    color:#E60000;
+    text-decoration:underline;
+}
+
 /* SEMANA + OUTPUT */
 .week-dashboard {
     background:white;
@@ -554,12 +578,16 @@ table.dataTable tbody td {
     </div>
 
     <div class="dashboard-card">
-        <div class="dashboard-card-title">Órdenes Afectadas Programadas</div>
+        <button class="dashboard-card-title kpi-filter-btn" data-kpi-filter="afectadas">
+            Órdenes Afectadas Programadas
+        </button>
         <div class="dashboard-card-value" id="totalAfectadas">0</div>
     </div>
 
     <div class="dashboard-card complete">
-        <div class="dashboard-card-title">Órdenes Completas</div>
+        <button class="dashboard-card-title kpi-filter-btn" data-kpi-filter="completas">
+            Órdenes Completas
+        </button>
         <div class="dashboard-card-value" id="totalCompletas">0</div>
     </div>
 
@@ -761,6 +789,7 @@ let cacheEstado = {};
 let cacheComentarios = {};
 let cacheAfectacion = {};
 let cacheSemana = null;
+let filtroKPI = "";
 
 function excelToDate(v){
     if(typeof v==="number"){
@@ -1013,7 +1042,7 @@ function aplicarDatos(){
 
     });
 
-    calcularKPIs();
+    aplicarFiltros();
 }
 
 function recalcularTotalSemana(){
@@ -1077,11 +1106,35 @@ function aplicarFiltros(){
             }
         }
 
+        if(filtroKPI === "afectadas" && !af){
+            ok = false;
+        }
+
+        if(filtroKPI === "completas" && af){
+            ok = false;
+        }
+
         $(this).toggle(ok);
     });
 
     calcularKPIs();
 }
+
+$(document).on("click",".kpi-filter-btn", function(){
+
+    let filtro = $(this).data("kpi-filter");
+
+    if(filtroKPI === filtro){
+        filtroKPI = "";
+        $(".kpi-filter-btn").removeClass("active");
+    } else {
+        filtroKPI = filtro;
+        $(".kpi-filter-btn").removeClass("active");
+        $(this).addClass("active");
+    }
+
+    aplicarFiltros();
+});
 
 $("#filtroEstado,#filtroTiempo,#filtroFecha").on("change", aplicarFiltros);
 $("#filtroOrdenes").on("input", aplicarFiltros);
