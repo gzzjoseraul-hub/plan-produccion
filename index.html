@@ -286,15 +286,15 @@ button {
     resize:none;
 }
 
-/* APLICACIÓN MASIVA */
+/* APLICACIÓN MASIVA INTEGRADA AL BLOQUE DE FILTROS */
 .bulk-actions {
-    margin-top:10px;
-    padding-top:10px;
-    border-top:1px solid #e0e0e0;
+    margin-left:auto;
+    padding-left:18px;
+    border-left:1px solid #e0e0e0;
     display:flex;
     gap:14px;
     flex-wrap:wrap;
-    align-items:flex-end;
+    align-items:flex-start;
 }
 
 .bulk-box {
@@ -331,6 +331,8 @@ button {
     border-radius:6px;
     padding:7px 14px;
     font-weight:bold;
+    align-self:flex-end;
+    height:38px;
 }
 
 #bulkApply:hover {
@@ -489,6 +491,13 @@ table.dataTable tbody td {
 
     .output-week-field label {
         font-size:9px;
+    }
+
+    .bulk-actions {
+        margin-left:0;
+        padding-left:0;
+        border-left:none;
+        width:100%;
     }
 }
 
@@ -668,37 +677,37 @@ table.dataTable tbody td {
             <textarea id="filtroOrdenes" placeholder="Una orden por línea"></textarea>
         </div>
 
-    </div>
+        <div class="bulk-actions">
 
-    <div class="bulk-actions">
+            <div class="bulk-box">
+                <label>Estado masivo</label>
+                <select id="bulkEstado">
+                    <option value="">No cambiar</option>
+                    <option value="urgente">Urgente</option>
+                    <option value="consolidada">Consolidada</option>
+                    <option value="avance">MAX AVANCE</option>
+                    <option value="embarque">MAX EMBARQUE</option>
+                </select>
+            </div>
 
-        <div class="bulk-box">
-            <label>Estado masivo</label>
-            <select id="bulkEstado">
-                <option value="">No cambiar</option>
-                <option value="urgente">Urgente</option>
-                <option value="consolidada">Consolidada</option>
-                <option value="avance">MAX AVANCE</option>
-                <option value="embarque">MAX EMBARQUE</option>
-            </select>
+            <div class="bulk-box">
+                <label>Afectación masiva</label>
+                <select id="bulkAfectacion">
+                    <option value="">No cambiar</option>
+                    <option value="MATERIAL">MATERIAL</option>
+                    <option value="IR">IR</option>
+                    <option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option>
+                </select>
+            </div>
+
+            <div class="bulk-box">
+                <label>Comentario masivo</label>
+                <textarea id="bulkComentario" placeholder="No cambiar comentario si está vacío"></textarea>
+            </div>
+
+            <button id="bulkApply">Aplicar a visibles</button>
+
         </div>
-
-        <div class="bulk-box">
-            <label>Afectación masiva</label>
-            <select id="bulkAfectacion">
-                <option value="">No cambiar</option>
-                <option value="MATERIAL">MATERIAL</option>
-                <option value="IR">IR</option>
-                <option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option>
-            </select>
-        </div>
-
-        <div class="bulk-box">
-            <label>Comentario masivo</label>
-            <textarea id="bulkComentario" placeholder="No cambiar comentario si está vacío"></textarea>
-        </div>
-
-        <button id="bulkApply">Aplicar a visibles</button>
 
     </div>
 </div>
@@ -1175,9 +1184,6 @@ function calcularKPIs(){
     $("#overdueCompleto").text(money(overdueCompleto));
 }
 
-/* =========================
-   APLICACIÓN MASIVA A FILAS VISIBLES
-========================= */
 $(document).on("click","#bulkApply", async function(){
 
     let estadoMasivo = $("#bulkEstado").val();
@@ -1340,4 +1346,3 @@ setInterval(setAyer, 30000);
 
 </body>
 </html>
-``
