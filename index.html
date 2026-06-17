@@ -142,26 +142,38 @@ button {
 
 /* BOTONES EN TITULOS KPI */
 .kpi-filter-btn {
-    background:transparent;
+    background:#E60000;
+    color:white;
     border:none;
-    padding:0;
+    border-radius:6px;
+    padding:4px 6px;
     cursor:pointer;
-    font:inherit;
-    color:#444;
+
+    font-family: Arial, sans-serif;
+    font-size:clamp(8px, 0.65vw, 11px);
+    font-weight:bold;
     text-transform:uppercase;
     letter-spacing:0.2px;
+    line-height:1.05;
+
     width:100%;
     text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .kpi-filter-btn:hover {
-    color:#E60000;
-    text-decoration:underline;
+    background:#b80000;
+    color:white;
+    text-decoration:none;
 }
 
 .kpi-filter-btn.active {
-    color:#E60000;
-    text-decoration:underline;
+    background:#b80000;
+    color:white;
+    text-decoration:none;
+    box-shadow:0 0 0 2px rgba(230,0,0,0.25);
 }
 
 /* SEMANA + OUTPUT */
