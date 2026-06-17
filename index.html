@@ -79,7 +79,7 @@ button {
 /* DASHBOARD */
 .dashboard-main {
     display:grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap:12px;
     margin-bottom:10px;
     width:100%;
@@ -90,33 +90,38 @@ button {
     border-radius:14px;
     box-shadow:0 3px 10px rgba(0,0,0,0.09);
     height:86px;
-    padding:9px 14px;
+    padding:9px 10px;
     border-top:5px solid #E60000;
     display:flex;
     flex-direction:column;
     justify-content:center;
+    align-items:center;
+    text-align:center;
     min-width:0;
 }
 
 .dashboard-card-title {
-    font-size:clamp(9px, 0.75vw, 12px);
+    font-size:clamp(8px, 0.65vw, 11px);
     font-weight:bold;
     color:#444;
     text-transform:uppercase;
-    letter-spacing:0.3px;
+    letter-spacing:0.2px;
     margin-bottom:5px;
-    white-space:nowrap;
+    line-height:1.05;
+    width:100%;
+    text-align:center;
     overflow:hidden;
-    text-overflow:ellipsis;
 }
 
 .dashboard-card-value {
-    font-size:clamp(18px, 1.45vw, 23px);
+    font-size:clamp(16px, 1.25vw, 22px);
     font-weight:bold;
     color:#000;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    width:100%;
+    text-align:center;
 }
 
 .dashboard-card.overdue {
@@ -411,15 +416,15 @@ table.dataTable tbody td {
 @media (max-width:1100px) {
     .dashboard-card {
         height:82px;
-        padding:8px 10px;
+        padding:8px 8px;
     }
 
     .dashboard-card-title {
-        font-size:9px;
+        font-size:8px;
     }
 
     .dashboard-card-value {
-        font-size:18px;
+        font-size:16px;
     }
 
     .week-row {
@@ -438,7 +443,7 @@ table.dataTable tbody td {
 
 @media (max-width:850px) {
     .dashboard-main {
-        grid-template-columns:repeat(5, minmax(120px, 1fr));
+        grid-template-columns:repeat(7, minmax(95px, 1fr));
     }
 
     .week-row {
@@ -474,28 +479,38 @@ table.dataTable tbody td {
 <div class="dashboard-main">
 
     <div class="dashboard-card">
-        <div class="dashboard-card-title">Total $</div>
+        <div class="dashboard-card-title">Total Programado $</div>
         <div class="dashboard-card-value" id="totalMonto">$0</div>
     </div>
 
     <div class="dashboard-card overdue">
-        <div class="dashboard-card-title">Overdue $</div>
+        <div class="dashboard-card-title">Overdue Programado $</div>
         <div class="dashboard-card-value" id="totalOverdue">$0</div>
     </div>
 
     <div class="dashboard-card">
-        <div class="dashboard-card-title">Órdenes</div>
+        <div class="dashboard-card-title">Órdenes Totales Programadas</div>
         <div class="dashboard-card-value" id="totalOrders">0</div>
     </div>
 
     <div class="dashboard-card">
-        <div class="dashboard-card-title">Afectadas</div>
+        <div class="dashboard-card-title">Órdenes Afectadas Programadas</div>
         <div class="dashboard-card-value" id="totalAfectadas">0</div>
     </div>
 
     <div class="dashboard-card complete">
-        <div class="dashboard-card-title">Órdenes completas</div>
+        <div class="dashboard-card-title">Órdenes Completas</div>
         <div class="dashboard-card-value" id="totalCompletas">0</div>
+    </div>
+
+    <div class="dashboard-card complete">
+        <div class="dashboard-card-title">Monto Total Completo</div>
+        <div class="dashboard-card-value" id="montoTotalCompleto">$0</div>
+    </div>
+
+    <div class="dashboard-card overdue">
+        <div class="dashboard-card-title">Overdue Completo</div>
+        <div class="dashboard-card-value" id="overdueCompleto">$0</div>
     </div>
 
 </div>
@@ -1039,11 +1054,14 @@ function calcularKPIs(){
     let overdue=0;
     let c=0;
     let afectadas=0;
+    let montoTotalCompleto=0;
+    let overdueCompleto=0;
 
     $("#tabla tbody tr:visible").each(function(){
 
         let monto=parseFloat($(this).data("monto"))||0;
         let t=$(this).data("tiempo");
+        let tieneAfectacion = !!$(this).find(".afectacion").val();
 
         total+=monto;
 
@@ -1051,7 +1069,15 @@ function calcularKPIs(){
 
         c++;
 
-        if($(this).find(".afectacion").val()) afectadas++;
+        if(tieneAfectacion){
+            afectadas++;
+        } else {
+            montoTotalCompleto += monto;
+
+            if(t==="overdue"){
+                overdueCompleto += monto;
+            }
+        }
     });
 
     let completas = c - afectadas;
@@ -1062,6 +1088,8 @@ function calcularKPIs(){
     $("#totalOrders").text(c);
     $("#totalAfectadas").text(afectadas);
     $("#totalCompletas").text(completas);
+    $("#montoTotalCompleto").text(money(montoTotalCompleto));
+    $("#overdueCompleto").text(money(overdueCompleto));
 }
 
 $(document).on("click","#clearData", async function(){
