@@ -286,6 +286,57 @@ button {
     resize:none;
 }
 
+/* APLICACIÓN MASIVA */
+.bulk-actions {
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid #e0e0e0;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+}
+
+.bulk-box {
+    display:flex;
+    flex-direction:column;
+    font-size:12px;
+}
+
+.bulk-box label {
+    margin-bottom:4px;
+    font-weight:bold;
+    color:#444;
+}
+
+.bulk-box select,
+.bulk-box input,
+.bulk-box textarea {
+    border:1px solid #aaa;
+    border-radius:4px;
+    padding:3px 4px;
+    font-size:13px;
+}
+
+#bulkComentario {
+    width:260px;
+    height:38px;
+    resize:none;
+}
+
+#bulkApply {
+    background:#E60000;
+    color:white;
+    border:none;
+    border-radius:6px;
+    padding:7px 14px;
+    font-weight:bold;
+}
+
+#bulkApply:hover {
+    background:#b80000;
+}
+
 /* LEYENDA */
 .legend {
     display:flex;
@@ -616,6 +667,38 @@ table.dataTable tbody td {
             <label>Multi Orders</label>
             <textarea id="filtroOrdenes" placeholder="Una orden por línea"></textarea>
         </div>
+
+    </div>
+
+    <div class="bulk-actions">
+
+        <div class="bulk-box">
+            <label>Estado masivo</label>
+            <select id="bulkEstado">
+                <option value="">No cambiar</option>
+                <option value="urgente">Urgente</option>
+                <option value="consolidada">Consolidada</option>
+                <option value="avance">MAX AVANCE</option>
+                <option value="embarque">MAX EMBARQUE</option>
+            </select>
+        </div>
+
+        <div class="bulk-box">
+            <label>Afectación masiva</label>
+            <select id="bulkAfectacion">
+                <option value="">No cambiar</option>
+                <option value="MATERIAL">MATERIAL</option>
+                <option value="IR">IR</option>
+                <option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option>
+            </select>
+        </div>
+
+        <div class="bulk-box">
+            <label>Comentario masivo</label>
+            <textarea id="bulkComentario" placeholder="No cambiar comentario si está vacío"></textarea>
+        </div>
+
+        <button id="bulkApply">Aplicar a visibles</button>
 
     </div>
 </div>
@@ -1092,6 +1175,71 @@ function calcularKPIs(){
     $("#overdueCompleto").text(money(overdueCompleto));
 }
 
+/* =========================
+   APLICACIÓN MASIVA A FILAS VISIBLES
+========================= */
+$(document).on("click","#bulkApply", async function(){
+
+    let estadoMasivo = $("#bulkEstado").val();
+    let afectacionMasiva = $("#bulkAfectacion").val();
+    let comentarioMasivo = $("#bulkComentario").val().trim();
+
+    if(!estadoMasivo && !afectacionMasiva && !comentarioMasivo){
+        alert("Selecciona al menos un Estado, Afectación o Comentario para aplicar.");
+        return;
+    }
+
+    let filasVisibles = $("#tabla tbody tr:visible");
+
+    if(filasVisibles.length === 0){
+        alert("No hay órdenes visibles para actualizar.");
+        return;
+    }
+
+    if(!confirm("Se aplicará la información a " + filasVisibles.length + " órdenes visibles. ¿Deseas continuar?")){
+        return;
+    }
+
+    for (const tr of filasVisibles){
+
+        let row = $(tr);
+        let id = row.data("id");
+
+        if(!id) continue;
+
+        if(estadoMasivo){
+            row.find(".estado").val(estadoMasivo);
+            row.find("td[data-estado]").attr("data-estado", estadoMasivo);
+
+            row.removeClass("urgente consolidada avance embarque");
+            row.addClass(estadoMasivo);
+        }
+
+        if(afectacionMasiva){
+            row.find(".afectacion").val(afectacionMasiva);
+        }
+
+        if(comentarioMasivo){
+            row.find(".comment-box").val(comentarioMasivo);
+        }
+
+        let comentarioFinal = row.find(".comment-box").val() || "";
+        let estadoFinal = row.find(".estado").val() || "";
+        let afectacionFinal = row.find(".afectacion").val() || "";
+
+        await setDoc(doc(db,"comentarios",id.toString()),{
+            comentario: comentarioFinal,
+            estado: estadoFinal,
+            afectacion: afectacionFinal
+        });
+    }
+
+    calcularKPIs();
+
+    alert("Actualización masiva completada.");
+
+});
+
 $(document).on("click","#clearData", async function(){
 
     let pass = prompt("Ingresa la clave:");
@@ -1192,3 +1340,4 @@ setInterval(setAyer, 30000);
 
 </body>
 </html>
+``
