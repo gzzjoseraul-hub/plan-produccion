@@ -3,68 +3,1370 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plan de Producción RG Interiores</title>
+  <title>Plan de producción · RG Interiores</title>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet" />
-  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
   <style>
-    :root{--abb:#e60000;--abb-dark:#b80000;--bg:#f3f5f8;--card:#fff;--text:#111827;--muted:#64748b;--border:#dbe3ef;--ok:#16a34a;--warn:#f59e0b;--red:#dc2626;--blue:#2563eb;--cyan:#00a7d8;--orange:#f97316;--yellow:#facc15;--shadow:0 8px 20px rgba(15,23,42,.08)}
-    *{box-sizing:border-box}html,body{min-width:1920px;overflow-x:auto}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}button{cursor:pointer}
-    .app-header{width:1920px;background:linear-gradient(135deg,#d40000,#e60000);color:white;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 5px 18px rgba(0,0,0,.18)}.header-title{font-size:24px;font-weight:900;letter-spacing:.2px}.header-subtitle{margin-top:3px;font-size:12px;color:#ffe4e4;font-weight:700}.header-logo{font-size:42px;font-weight:900;opacity:.95;letter-spacing:-1px}
-    .container{width:1920px;max-width:none;margin:0 auto;padding:12px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.toolbar-left,.toolbar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:8px 11px;font-size:12px;font-weight:800}.btn-primary{background:var(--abb);color:white}.btn-primary:hover{background:var(--abb-dark)}.btn-secondary{background:#e2e8f0;color:#0f172a}.btn-success{background:#16a34a;color:white}.btn-dark{background:#111827;color:white}.btn-danger-soft{background:#fee2e2;color:#991b1b}.hidden{display:none!important}
-    #emailSummaryArea{background:var(--bg);padding:0;margin:0}.kpi-grid{display:grid;grid-template-columns:1.55fr repeat(6,minmax(0,1fr));gap:8px;margin-bottom:10px}.kpi-card{background:white;border:1px solid var(--border);border-radius:14px;padding:10px;min-height:82px;box-shadow:var(--shadow);border-top:5px solid var(--abb);display:flex;flex-direction:column;justify-content:center;min-width:0}.kpi-title{font-size:11px;color:#475569;font-weight:900;text-transform:uppercase;line-height:1.1;margin-bottom:5px;text-align:center}.kpi-value{font-size:24px;font-weight:900;color:#111827;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kpi-card.main-total{min-height:92px}.kpi-card.main-total .kpi-value{font-size:32px;letter-spacing:-1px}.kpi-card.overdue{background:#fff1f1}.kpi-card.overdue .kpi-value{color:var(--abb)}.kpi-card.complete{background:#f0fff4}.kpi-card.complete .kpi-value{color:var(--ok)}.kpi-filter-btn{width:100%;background:transparent;border:0;padding:0;color:#475569;font-size:inherit;font-weight:inherit;text-transform:inherit;line-height:inherit}.kpi-filter-btn.active{color:var(--abb);text-decoration:underline}
-    .ops-compact{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.ops-card{background:white;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.ops-header{padding:7px 10px;background:#f8fafc;border-bottom:1px solid var(--border);font-size:12px;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:8px}.ops-header span{font-size:10px;color:var(--muted);font-weight:900}.ops-body{padding:8px 10px}.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.day-box{background:#f8fafc;border:1px solid var(--border);border-radius:9px;padding:5px;text-align:center}.day-box b{display:block;font-size:9px;color:#475569;margin-bottom:3px}.day-box input{width:100%;height:24px;border:1px solid var(--border);border-radius:7px;text-align:center;font-weight:900;font-size:13px;background:white}.day-box.total input{border:2px solid var(--abb);color:var(--abb);background:#fff5f5}.output-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.output-field{background:var(--abb);color:white;border-radius:10px;padding:6px}.output-field label{display:block;font-size:9px;font-weight:900;margin-bottom:3px}.output-field input{width:100%;border:0;border-radius:8px;height:28px;text-align:center;color:var(--abb);font-size:16px;font-weight:900;outline:none}
-    .main-layout{display:grid;grid-template-columns:360px 1fr;gap:10px;align-items:start}.side-stack{display:flex;flex-direction:column;gap:10px}.card{background:white;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.card-header{padding:9px 12px;background:#f8fafc;border-bottom:1px solid var(--border);font-size:13px;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:8px}.card-body{padding:11px 12px}.filter-grid,.bulk-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:block;font-size:10px;color:var(--muted);font-weight:900;text-transform:uppercase;margin-bottom:4px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--border);border-radius:9px;padding:7px 8px;font-size:12px;outline:none;background:white;color:var(--text)}.field textarea{min-height:50px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--abb);box-shadow:0 0 0 3px rgba(230,0,0,.1)}
-    .legend{display:grid;grid-template-columns:1fr 1fr;gap:6px}.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#334155;font-weight:700}.legend-color{width:13px;height:13px;border-radius:999px;flex:0 0 auto}.legend-urgente{background:#f00}.legend-consolidada{background:#00b4ff}.legend-avance{background:#ff0;border:1px solid #aaa}.legend-embarque{background:#ff6a00}.table-card{min-width:0}.table-subbar{display:flex;justify-content:space-between;align-items:center;gap:8px}.status-pills{display:flex;gap:6px;flex-wrap:wrap}.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:#f1f5f9;font-size:10px;font-weight:900;color:#334155}.pill-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.tabla-container{max-height:66vh;overflow:auto;background:white;width:100%}.dataTables_filter,.dataTables_info,.dataTables_length,.dataTables_paginate{display:none!important}table.dataTable{width:100%!important;table-layout:fixed;border-collapse:collapse!important;font-size:12px}#tabla th,#tabla td{font-size:12px!important;padding:5px 6px!important;line-height:1.15!important;vertical-align:middle;overflow:hidden;text-overflow:ellipsis}#tabla thead th{position:sticky;top:0;background:#f8fafc;z-index:6;border-bottom:1px solid #cbd5e1;color:#475569;font-size:10px!important;text-transform:uppercase}#tabla tbody tr{height:30px!important}#tabla select,#tabla input{font-size:12px!important;height:24px!important;padding:2px 4px!important;border:1px solid #cbd5e1;border-radius:6px;width:100%}.comment-box{width:100%}
-    #tabla th:nth-child(1),#tabla td:nth-child(1){width:10%}#tabla th:nth-child(2),#tabla td:nth-child(2){width:6%}#tabla th:nth-child(3),#tabla td:nth-child(3){width:10%;font-weight:900}#tabla th:nth-child(4),#tabla td:nth-child(4){width:9%;text-align:right}#tabla th:nth-child(5),#tabla td:nth-child(5){width:9%}#tabla th:nth-child(6),#tabla td:nth-child(6){width:9%}#tabla th:nth-child(7),#tabla td:nth-child(7){width:13%}#tabla th:nth-child(8),#tabla td:nth-child(8){width:14%}#tabla th:nth-child(9),#tabla td:nth-child(9){width:20%}.urgente td:nth-child(-n+3){background:#f00!important;color:white}.consolidada td:nth-child(-n+3){background:#00b4ff!important;color:white}.avance td:nth-child(-n+3){background:#ff0!important;color:#111}.embarque td:nth-child(-n+3){background:#ff6a00!important;color:white}.overdue:not(.urgente):not(.consolidada):not(.avance):not(.embarque) td:nth-child(6){color:var(--abb);font-weight:900}
-    .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}.modal{width:min(720px,100%);background:white;border-radius:16px;overflow:hidden;box-shadow:0 25px 60px rgba(15,23,42,.35)}.modal-header{padding:14px 16px;background:#f8fafc;border-bottom:1px solid var(--border);font-weight:900}.modal-body{padding:16px}.modal-footer{padding:12px 16px;border-top:1px solid var(--border);background:#f8fafc;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}.help-box{font-size:12px;color:var(--muted);background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px;line-height:1.45}
+    /* ============================================================
+       TOKENS
+       El rojo ABB queda reservado para marca y acciones.
+       Los estados de dato usan su propia rampa para que no compitan.
+       ============================================================ */
+    :root{
+      --brand:#e60000; --brand-dark:#b80000; --brand-tint:#fff1f1;
+
+      --bg:#f4f6f9; --surface:#ffffff; --surface-alt:#f8fafc; --surface-hover:#f1f5f9;
+      --border:#e2e8f0; --border-strong:#cbd5e1;
+      --text:#0f172a; --text-2:#475569; --text-3:#94a3b8;
+
+      --danger:#dc2626;  --danger-bg:#fef2f2;  --danger-text:#b91c1c;  --danger-border:#fecaca;
+      --success:#16a34a; --success-bg:#f0fdf4; --success-text:#15803d; --success-border:#bbf7d0;
+      --warning:#f59e0b; --warning-bg:#fffbeb; --warning-text:#b45309; --warning-border:#fde68a;
+      --info:#2563eb;    --info-bg:#eff6ff;    --info-text:#1d4ed8;    --info-border:#bfdbfe;
+      --ship:#f97316;    --ship-bg:#fff7ed;    --ship-text:#c2410c;    --ship-border:#fed7aa;
+
+      --radius:10px; --radius-sm:7px;
+      --shadow:0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+      --shadow-lg:0 16px 40px rgba(15,23,42,.16);
+      --focus:0 0 0 3px rgba(230,0,0,.15);
+      --chevron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5 6 8.5 10 4.5' fill='none' stroke='%2394a3b8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{
+      background:var(--bg); color:var(--text);
+      font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+      font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased;
+    }
+    .num{font-variant-numeric:tabular-nums}
+    .right{text-align:right}
+    .muted{color:var(--text-3)}
+    .hidden{display:none !important}
+    :focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+    @media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+
+    /* ---------- Header ---------- */
+    .app-header{
+      background:var(--brand); color:#fff; padding:12px 20px;
+      display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+    }
+    .header-title{font-size:17px; font-weight:600; letter-spacing:.1px}
+    .header-sub{font-size:12px; color:rgba(255,255,255,.78); margin-top:1px}
+    .header-right{display:flex; align-items:center; gap:14px}
+    .sync-pill{
+      display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500;
+      background:rgba(255,255,255,.16); color:#fff; padding:4px 10px; border-radius:999px;
+    }
+    .sync-dot{width:7px;height:7px;border-radius:50%;background:#86efac}
+    .sync-pill[data-state="saving"] .sync-dot{background:#fde68a; animation:pulse 1s infinite}
+    .sync-pill[data-state="error"]  .sync-dot{background:#fca5a5}
+    @keyframes pulse{50%{opacity:.35}}
+    .header-logo{font-size:30px; font-weight:700; letter-spacing:-1px; opacity:.95}
+
+    /* ---------- Layout ---------- */
+    .container{max-width:1800px; margin:0 auto; padding:16px}
+    .toolbar{display:flex; justify-content:space-between; gap:10px; margin-bottom:14px; flex-wrap:wrap}
+    .toolbar-left,.toolbar-right{display:flex; gap:8px; flex-wrap:wrap}
+
+    .btn{
+      border:1px solid var(--border-strong); background:var(--surface); color:var(--text);
+      border-radius:var(--radius-sm); padding:8px 13px; font-size:13px; font-weight:500;
+      cursor:pointer; transition:background .12s, border-color .12s; font-family:inherit;
+    }
+    .btn:hover{background:var(--surface-hover)}
+    .btn:active{transform:scale(.985)}
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+    .btn-primary{background:var(--brand); border-color:var(--brand); color:#fff}
+    .btn-primary:hover{background:var(--brand-dark); border-color:var(--brand-dark)}
+    .btn-ghost{border-color:transparent; background:transparent; color:var(--text-2)}
+    .btn-ghost:hover{background:var(--surface-hover)}
+    .btn-danger{border-color:var(--danger-border); background:var(--danger-bg); color:var(--danger-text)}
+    .btn-danger:hover{background:#fee2e2}
+    .btn-sm{padding:5px 10px; font-size:12px}
+
+    /* ---------- KPIs ---------- */
+    #emailSummaryArea{background:var(--bg)}
+    .kpi-grid{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; margin-bottom:12px}
+    @media (max-width:1500px){.kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    @media (max-width:820px){.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+    .kpi-card{
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:12px 14px; min-width:0; box-shadow:var(--shadow);
+      display:flex; flex-direction:column; gap:1px; text-align:left;
+      font-family:inherit; transition:border-color .12s, box-shadow .12s;
+    }
+    .kpi-label{font-size:12px; font-weight:500; color:var(--text-2); display:flex; align-items:center; gap:5px; min-height:18px}
+    .kpi-value{font-size:23px; font-weight:600; letter-spacing:-.5px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums}
+    .kpi-sub{font-size:11px; color:var(--text-3)}
+    .kpi-card.tone-danger{background:var(--danger-bg); border-color:var(--danger-border)}
+    .kpi-card.tone-danger .kpi-label,.kpi-card.tone-danger .kpi-value,.kpi-card.tone-danger .kpi-sub{color:var(--danger-text)}
+    .kpi-card.tone-success{background:var(--success-bg); border-color:var(--success-border)}
+    .kpi-card.tone-success .kpi-label,.kpi-card.tone-success .kpi-value,.kpi-card.tone-success .kpi-sub{color:var(--success-text)}
+    .kpi-card.tone-warning{background:var(--warning-bg); border-color:var(--warning-border)}
+    .kpi-card.tone-warning .kpi-label,.kpi-card.tone-warning .kpi-value,.kpi-card.tone-warning .kpi-sub{color:var(--warning-text)}
+    .kpi-card.is-filter{cursor:pointer}
+    .kpi-card.is-filter:hover{border-color:var(--border-strong); box-shadow:0 2px 8px rgba(15,23,42,.09)}
+    .kpi-card.is-filter.active{box-shadow:0 0 0 2px var(--brand)}
+    .kpi-card.is-filter.active .kpi-sub::after{content:" · filtro activo"}
+
+    /* ---------- Semana / Output ---------- */
+    .ops-grid{display:grid; grid-template-columns:1.6fr 1fr; gap:10px; margin-bottom:14px}
+    @media (max-width:1100px){.ops-grid{grid-template-columns:1fr}}
+    .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); overflow:hidden}
+    .card-header{
+      padding:10px 14px; background:var(--surface-alt); border-bottom:1px solid var(--border);
+      font-size:13px; font-weight:600; display:flex; justify-content:space-between; align-items:center; gap:10px;
+    }
+    .card-header .meta{font-size:11px; font-weight:400; color:var(--text-3)}
+    .card-body{padding:12px 14px}
+
+    .week-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:7px}
+    .day-box{background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius-sm); padding:7px 5px; text-align:center}
+    .day-box b{display:block; font-size:11px; font-weight:500; color:var(--text-2); margin-bottom:4px}
+    .day-box input{width:100%; height:30px; border:1px solid var(--border); border-radius:6px; text-align:center; font-weight:600; font-size:15px; background:var(--surface); color:var(--text); font-variant-numeric:tabular-nums}
+    .day-box.total{background:var(--brand-tint); border-color:var(--danger-border)}
+    .day-box.total b{color:var(--danger-text)}
+    .day-box.total input{border-color:var(--danger-border); color:var(--brand); background:var(--surface)}
+
+    .output-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+    .output-field{background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius-sm); padding:7px 8px}
+    .output-field label{display:block; font-size:11px; font-weight:500; color:var(--text-2); margin-bottom:4px}
+    .output-field input{width:100%; height:30px; border:1px solid var(--border); border-radius:6px; text-align:center; font-size:15px; font-weight:600; color:var(--text); background:var(--surface); font-variant-numeric:tabular-nums}
+
+    /* ---------- Main ---------- */
+    .main-layout{display:grid; grid-template-columns:290px minmax(0,1fr); gap:14px; align-items:start}
+    @media (max-width:1150px){.main-layout{grid-template-columns:1fr}}
+    .side-stack{display:flex; flex-direction:column; gap:12px}
+
+    .field{min-width:0; margin-bottom:10px}
+    .field:last-child{margin-bottom:0}
+    .field label{display:block; font-size:11px; font-weight:500; color:var(--text-2); margin-bottom:4px}
+    .field input,.field select,.field textarea{
+      width:100%; border:1px solid var(--border); border-radius:var(--radius-sm);
+      padding:7px 9px; font-size:13px; background:var(--surface); color:var(--text);
+      font-family:inherit; outline:none;
+    }
+    .field textarea{min-height:58px; resize:vertical}
+    .field input:focus,.field select:focus,.field textarea:focus,
+    .day-box input:focus,.output-field input:focus{border-color:var(--brand); box-shadow:var(--focus)}
+    .field-row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+
+    .legend{display:grid; grid-template-columns:1fr 1fr; gap:7px}
+    .legend-item{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-2)}
+    .legend-bar{width:4px; height:15px; border-radius:2px; flex:0 0 auto}
+    .lg-urgente{background:var(--danger)} .lg-consolidada{background:var(--info)}
+    .lg-avance{background:var(--warning)} .lg-embarque{background:var(--ship)}
+
+    .progress{height:5px; background:var(--border); border-radius:999px; overflow:hidden; margin-top:9px}
+    .progress > div{height:100%; width:0; background:var(--brand); transition:width .15s}
+
+    /* ---------- Barra de la tabla ---------- */
+    .table-bar{display:flex; align-items:center; gap:9px; padding:10px 12px; border-bottom:1px solid var(--border); flex-wrap:wrap}
+    .search{display:flex; align-items:center; gap:7px; flex:1; min-width:190px; max-width:340px; border:1px solid var(--border); border-radius:var(--radius-sm); padding:0 10px; background:var(--surface-alt)}
+    .search:focus-within{border-color:var(--brand); box-shadow:var(--focus); background:var(--surface)}
+    .search svg{flex:0 0 auto; color:var(--text-3)}
+    .search input{flex:1; border:0; background:transparent; outline:none; padding:8px 0; font-size:13px; color:var(--text); font-family:inherit; min-width:0}
+    .chips{display:flex; gap:6px; flex-wrap:wrap}
+    .chip{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:500; padding:4px 6px 4px 10px; border-radius:999px; background:var(--info-bg); color:var(--info-text); border:1px solid var(--info-border)}
+    .chip button{border:0; background:transparent; color:inherit; cursor:pointer; font-size:14px; line-height:1; padding:0 2px; opacity:.6; font-family:inherit}
+    .chip button:hover{opacity:1}
+    .row-count{margin-left:auto; font-size:12px; color:var(--text-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+    .row-count b{font-weight:600; color:var(--text)}
+
+    .sel-bar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 14px; background:var(--info-bg); border-bottom:1px solid var(--info-border); font-size:13px; color:var(--info-text); font-weight:500}
+
+    /* ---------- Tabla ---------- */
+    .tabla-wrap{overflow:auto; max-height:calc(100vh - 300px); min-height:280px}
+    #tabla{width:100%; min-width:1120px; border-collapse:separate; border-spacing:0; font-size:13px}
+    #tabla thead th{
+      position:sticky; top:0; z-index:2; background:var(--surface-alt);
+      border-bottom:1px solid var(--border-strong);
+      padding:9px 10px; text-align:left; white-space:nowrap;
+      font-size:11px; font-weight:600; color:var(--text-2); letter-spacing:.2px;
+    }
+    #tabla th.sortable{cursor:pointer; user-select:none}
+    #tabla th.sortable:hover{color:var(--text); background:var(--surface-hover)}
+    #tabla th .arrow{margin-left:4px; opacity:.3; font-size:10px}
+    #tabla th[aria-sort] .arrow{opacity:1; color:var(--brand)}
+    #tabla th.sel,#tabla td.sel{width:40px; padding-left:0; padding-right:0; text-align:center}
+
+    #tabla tbody td{
+      padding:0 10px; height:40px; vertical-align:middle;
+      border-bottom:1px solid var(--border); background:var(--surface);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    #tabla tbody td:first-child{border-left:3px solid transparent}
+    #tabla tbody tr.urgente     td:first-child{border-left-color:var(--danger)}
+    #tabla tbody tr.consolidada td:first-child{border-left-color:var(--info)}
+    #tabla tbody tr.avance      td:first-child{border-left-color:var(--warning)}
+    #tabla tbody tr.embarque    td:first-child{border-left-color:var(--ship)}
+    #tabla tbody tr.urgente     td{background:#fff7f7}
+    #tabla tbody tr.consolidada td{background:#f7fafe}
+    #tabla tbody tr.avance      td{background:#fffdf5}
+    #tabla tbody tr.embarque    td{background:#fffaf5}
+    /* el wash inset funciona sobre cualquier tinte de fondo */
+    #tabla tbody tr:hover td{box-shadow:inset 0 0 0 9999px rgba(15,23,42,.028)}
+    #tabla tbody tr.selected td{box-shadow:inset 0 0 0 9999px rgba(37,99,235,.075)}
+    .col-order{font-weight:600}
+    .col-com{width:22%; min-width:200px; white-space:normal}
+
+    .badge{display:inline-block; font-size:11px; font-weight:600; padding:1px 7px; border-radius:999px; margin-left:6px; font-variant-numeric:tabular-nums}
+    .badge-overdue{background:var(--danger-bg); color:var(--danger-text)}
+    .badge-servicio{background:var(--warning-bg); color:var(--warning-text)}
+
+    /* Controles fantasma: parecen texto hasta que los tocas */
+    .ghost{
+      width:100%; max-width:150px; border:1px solid transparent; background-color:transparent;
+      border-radius:999px; padding:4px 24px 4px 9px; font-size:11px; font-weight:600;
+      color:var(--text-3); font-family:inherit; cursor:pointer; outline:none;
+      appearance:none; -webkit-appearance:none;
+      background-image:var(--chevron); background-repeat:no-repeat; background-position:right 7px center; background-size:11px;
+    }
+    .ghost:hover{border-color:var(--border-strong)}
+    .ghost:focus{border-color:var(--brand); box-shadow:var(--focus)}
+    select.estado[data-v="urgente"]    {background-color:var(--danger-bg);  color:var(--danger-text);  border-color:var(--danger-border)}
+    select.estado[data-v="consolidada"]{background-color:var(--info-bg);    color:var(--info-text);    border-color:var(--info-border)}
+    select.estado[data-v="avance"]     {background-color:var(--warning-bg); color:var(--warning-text); border-color:var(--warning-border)}
+    select.estado[data-v="embarque"]   {background-color:var(--ship-bg);    color:var(--ship-text);    border-color:var(--ship-border)}
+    select.afectacion[data-v]:not([data-v=""]){background-color:var(--warning-bg); color:var(--warning-text); border-color:var(--warning-border)}
+
+    input.comment-box{
+      width:100%; border:1px solid transparent; background:transparent; border-radius:var(--radius-sm);
+      padding:6px 8px; font-size:12px; color:var(--text); font-family:inherit; outline:none;
+    }
+    input.comment-box::placeholder{color:var(--text-3)}
+    input.comment-box:hover{border-color:var(--border)}
+    input.comment-box:focus{border-color:var(--brand); background:var(--surface); box-shadow:var(--focus)}
+    #tabla input[type="checkbox"]{width:15px; height:15px; accent-color:var(--brand); cursor:pointer; margin:0}
+
+    /* ---------- Estados vacíos ---------- */
+    .state{padding:56px 24px; text-align:center}
+    .state h3{margin:0 0 6px; font-size:15px; font-weight:600}
+    .state p{margin:0 0 16px; font-size:13px; color:var(--text-2)}
+    .skel{height:40px; border-bottom:1px solid var(--border); background:linear-gradient(90deg,#f1f5f9,#f8fafc,#f1f5f9); background-size:200% 100%; animation:shim 1.2s infinite}
+    @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* ---------- Modales ---------- */
+    .modal-backdrop{position:fixed; inset:0; background:rgba(15,23,42,.5); display:none; align-items:center; justify-content:center; padding:20px; z-index:900}
+    .modal-backdrop.open{display:flex}
+    .modal{width:min(600px,100%); background:var(--surface); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-lg)}
+    .modal.sm{width:min(430px,100%)}
+    .modal-header{padding:14px 18px; font-size:15px; font-weight:600; border-bottom:1px solid var(--border)}
+    .modal-body{padding:16px 18px}
+    .modal-body p{margin:0 0 12px; font-size:13px; color:var(--text-2)}
+    .modal-footer{padding:12px 18px; border-top:1px solid var(--border); background:var(--surface-alt); display:flex; justify-content:flex-end; gap:8px}
+    .note{font-size:12px; color:var(--text-2); background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; line-height:1.5}
+
+    /* ---------- Toasts ---------- */
+    .toasts{position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:8px; z-index:1000}
+    .toast{background:#0f172a; color:#fff; padding:10px 14px; border-radius:var(--radius); font-size:13px; box-shadow:var(--shadow-lg); animation:toastIn .16s ease-out}
+    .toast.ok{background:#15803d} .toast.err{background:#b91c1c}
+    @keyframes toastIn{from{opacity:0; transform:translateY(8px)}}
   </style>
 </head>
 <body>
-  <div class="app-header"><div><div class="header-title">PLAN DE PRODUCCIÓN RG INTERIORES</div><div id="lastUpdate" class="header-subtitle">Esperando información...</div></div><div class="header-logo">ABB</div></div>
-  <div class="container" id="reportArea">
-    <input type="file" id="upload" class="hidden" accept=".xlsx,.xls,.csv" /><button id="clearData" class="hidden">Limpiar datos</button>
-    <div class="toolbar"><div class="toolbar-left"><button class="btn btn-primary" id="uploadButton">Importar plan</button><button class="btn btn-secondary" id="downloadExcel">Descargar Excel</button><button class="btn btn-dark" id="openEmailReport">Enviar reporte</button></div><div class="toolbar-right"><button class="btn btn-danger-soft hidden" id="clearDataVisible">Limpiar datos</button></div></div>
 
-    <div id="emailSummaryArea">
-      <div class="kpi-grid">
-        <div class="kpi-card main-total"><div class="kpi-title">Total programado $</div><div class="kpi-value" id="totalMonto">$0</div></div>
-        <div class="kpi-card overdue"><div class="kpi-title">Overdue programado $</div><div class="kpi-value" id="totalOverdue">$0</div></div>
-        <div class="kpi-card complete"><div class="kpi-title">Monto completo</div><div class="kpi-value" id="montoTotalCompleto">$0</div></div>
-        <div class="kpi-card overdue"><div class="kpi-title">Overdue completo</div><div class="kpi-value" id="overdueCompleto">$0</div></div>
-        <div class="kpi-card"><div class="kpi-title"><button class="kpi-filter-btn" data-kpi-filter="afectadas">Órdenes afectadas</button></div><div class="kpi-value" id="totalAfectadas">0</div></div>
-        <div class="kpi-card complete"><div class="kpi-title"><button class="kpi-filter-btn" data-kpi-filter="completas">Órdenes completas</button></div><div class="kpi-value" id="totalCompletas">0</div></div>
-        <div class="kpi-card"><div class="kpi-title">Órdenes totales</div><div class="kpi-value" id="totalOrders">0</div></div>
-      </div>
+<header class="app-header">
+  <div>
+    <div class="header-title">Plan de producción · RG Interiores</div>
+    <div class="header-sub" id="lastUpdate">Cargando plan…</div>
+  </div>
+  <div class="header-right">
+    <span class="sync-pill" id="syncPill" data-state="idle" role="status" aria-live="polite">
+      <span class="sync-dot"></span><span id="syncText">Sincronizado</span>
+    </span>
+    <div class="header-logo">ABB</div>
+  </div>
+</header>
 
-      <section class="ops-compact">
-        <article class="ops-card"><div class="ops-header"><strong>Órdenes liberadas semana</strong><span>Semana actual</span></div><div class="ops-body"><div id="semanaData" class="week-grid"></div></div></article>
-        <article class="ops-card"><div class="ops-header"><strong>Output</strong><span id="fechaTexto"></span></div><div class="ops-body"><div class="output-grid"><div class="output-field"><label>Almacén</label><input type="number" id="outAlmacen" /></div><div class="output-field"><label>Incoming</label><input type="number" id="outIncoming" /></div><div class="output-field"><label>Accesorizado</label><input type="number" id="outAccesorizado" /></div><div class="output-field"><label>Interiores</label><input type="number" id="outInteriores" /></div></div></div></article>
-      </section>
+<div class="container">
+  <input type="file" id="upload" class="hidden" accept=".xlsx,.xls,.csv" />
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="btn btn-primary" id="uploadButton">Importar plan</button>
+      <button class="btn" id="downloadExcel">Descargar Excel</button>
+      <button class="btn" id="openEmailReport">Enviar reporte</button>
     </div>
-
-    <div class="main-layout"><aside class="side-stack"><section class="card"><div class="card-header">Filtros</div><div class="card-body"><div class="filter-grid"><div class="field"><label>Estado</label><select id="filtroEstado"><option value="">Todos</option><option value="urgente">Urgente</option><option value="consolidada">Consolidada</option><option value="avance">MAX AVANCE</option><option value="embarque">MAX EMBARQUE</option></select></div><div class="field"><label>Fecha programación</label><input type="date" id="filtroFecha" /></div><div class="field"><label>Estatus</label><select id="filtroTiempo"><option value="">Todos</option><option value="overdue">Overdue</option><option value="servicio">Servicio</option><option value="entiempo">En tiempo</option><option value="afectadas">Afectadas</option></select></div><div class="field"><label>Acción</label><button class="btn btn-secondary" style="width:100%;" id="resetFilters">Reset filtros</button></div><div class="field full"><label>Multi Orders / Sales Orders</label><textarea id="filtroOrdenes" placeholder="Una orden por línea, coma o tab"></textarea></div></div></div></section><section class="card"><div class="card-header">Estados visuales</div><div class="card-body"><div class="legend"><div class="legend-item"><span class="legend-color legend-urgente"></span>Urgente</div><div class="legend-item"><span class="legend-color legend-consolidada"></span>Consolidada</div><div class="legend-item"><span class="legend-color legend-avance"></span>MAX AVANCE</div><div class="legend-item"><span class="legend-color legend-embarque"></span>MAX EMBARQUE</div></div></div></section><section class="card"><div class="card-header">Aplicación masiva</div><div class="card-body"><div class="bulk-grid"><div class="field"><label>Estado</label><select id="bulkEstado"><option value="">No cambiar</option><option value="urgente">Urgente</option><option value="consolidada">Consolidada</option><option value="avance">MAX AVANCE</option><option value="embarque">MAX EMBARQUE</option></select></div><div class="field"><label>Afectación</label><select id="bulkAfectacion"><option value="">No cambiar</option><option value="MATERIAL">MATERIAL</option><option value="IR">IR</option><option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option></select></div><div class="field full"><label>Comentario</label><textarea id="bulkComentario" placeholder="No cambia si está vacío"></textarea></div><div class="field full"><button class="btn btn-primary" id="bulkApply" style="width:100%;">Aplicar a visibles</button></div></div></div></section></aside><main class="card table-card"><div class="card-header table-subbar"><div>Detalle del plan</div><div class="status-pills"><span class="pill"><span class="pill-dot" style="background:#e60000"></span>Overdue</span><span class="pill"><span class="pill-dot" style="background:#16a34a"></span>Completo</span><span class="pill"><span class="pill-dot" style="background:#f59e0b"></span>Afectado</span></div></div><div class="tabla-container"><table id="tabla" class="display"><thead><tr><th>Sales Order</th><th>Item</th><th>Order</th><th>Monto</th><th>Fecha Prog</th><th>RDD</th><th>Estado</th><th>Afectación</th><th>Comentario</th></tr></thead><tbody></tbody></table></div></main></div>
+    <div class="toolbar-right">
+      <button class="btn btn-danger hidden" id="clearDataVisible">Limpiar comentarios</button>
+    </div>
   </div>
 
-  <div class="modal-backdrop" id="emailModal"><div class="modal"><div class="modal-header">Enviar reporte por correo</div><div class="modal-body"><div class="field"><label>Destinatarios</label><input id="emailTo" placeholder="correo1@empresa.com; correo2@empresa.com" /></div><div class="field"><label>CC opcional</label><input id="emailCc" placeholder="correo_cc@empresa.com" /></div><div class="field"><label>Asunto</label><input id="emailSubject" value="Reporte Plan de Producción RG Interiores" /></div><div class="help-box">El botón enviará a Power Automate el resumen HTML, screenshot PNG y CSV de las órdenes visibles. Si todavía no tienes flujo, pega la URL del flujo en la constante <b>POWER_AUTOMATE_REPORT_URL</b> dentro del código.</div></div><div class="modal-footer"><button class="btn btn-secondary" id="closeEmailModal">Cancelar</button><button class="btn btn-primary" id="sendEmailReport">Enviar reporte</button></div></div></div>
+  <!-- Área capturada en el screenshot del correo -->
+  <div id="emailSummaryArea">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total programado</div>
+        <div class="kpi-value" id="totalMonto">$0</div>
+        <div class="kpi-sub" id="subTotal">0 órdenes</div>
+      </div>
+      <button class="kpi-card tone-danger is-filter" data-kpi-filter="overdue" type="button">
+        <div class="kpi-label">Overdue programado</div>
+        <div class="kpi-value" id="totalOverdue">$0</div>
+        <div class="kpi-sub" id="subOverdue">0% del total</div>
+      </button>
+      <div class="kpi-card tone-success">
+        <div class="kpi-label">Monto completo</div>
+        <div class="kpi-value" id="montoTotalCompleto">$0</div>
+        <div class="kpi-sub">sin afectación</div>
+      </div>
+      <div class="kpi-card tone-danger">
+        <div class="kpi-label">Overdue completo</div>
+        <div class="kpi-value" id="overdueCompleto">$0</div>
+        <div class="kpi-sub">vencido y liberable</div>
+      </div>
+      <button class="kpi-card tone-warning is-filter" data-kpi-filter="afectadas" type="button">
+        <div class="kpi-label">Órdenes afectadas</div>
+        <div class="kpi-value" id="totalAfectadas">0</div>
+        <div class="kpi-sub" id="subAfectadas">bloqueadas</div>
+      </button>
+      <button class="kpi-card tone-success is-filter" data-kpi-filter="completas" type="button">
+        <div class="kpi-label">Órdenes completas</div>
+        <div class="kpi-value" id="totalCompletas">0</div>
+        <div class="kpi-sub" id="subCompletas">listas para correr</div>
+      </button>
+      <div class="kpi-card">
+        <div class="kpi-label">Órdenes totales</div>
+        <div class="kpi-value" id="totalOrders">0</div>
+        <div class="kpi-sub" id="subOrders">en el alcance actual</div>
+      </div>
+    </div>
+
+    <div class="ops-grid">
+      <section class="card">
+        <div class="card-header">Órdenes liberadas <span class="meta">Semana actual · lunes a sábado</span></div>
+        <div class="card-body"><div id="semanaData" class="week-grid"></div></div>
+      </section>
+      <section class="card">
+        <div class="card-header">Output <span class="meta" id="fechaTexto"></span></div>
+        <div class="card-body">
+          <div class="output-grid">
+            <div class="output-field"><label for="outAlmacen">Almacén</label><input type="number" id="outAlmacen" /></div>
+            <div class="output-field"><label for="outIncoming">Incoming</label><input type="number" id="outIncoming" /></div>
+            <div class="output-field"><label for="outAccesorizado">Accesorizado</label><input type="number" id="outAccesorizado" /></div>
+            <div class="output-field"><label for="outInteriores">Interiores</label><input type="number" id="outInteriores" /></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <aside class="side-stack">
+      <section class="card">
+        <div class="card-header">Filtros</div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field">
+              <label for="filtroEstado">Estado</label>
+              <select id="filtroEstado">
+                <option value="">Todos</option>
+                <option value="urgente">Urgente</option>
+                <option value="consolidada">Consolidada</option>
+                <option value="avance">Max avance</option>
+                <option value="embarque">Max embarque</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filtroTiempo">Estatus</label>
+              <select id="filtroTiempo">
+                <option value="">Todos</option>
+                <option value="overdue">Overdue</option>
+                <option value="servicio">Servicio</option>
+                <option value="entiempo">En tiempo</option>
+                <option value="afectadas">Afectadas</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="filtroFecha">Fecha de programación</label>
+            <input type="date" id="filtroFecha" />
+          </div>
+          <div class="field">
+            <label for="filtroOrdenes">Lista de órdenes o sales orders</label>
+            <textarea id="filtroOrdenes" placeholder="4501182&#10;4501197"></textarea>
+          </div>
+          <button class="btn" id="resetFilters" style="width:100%">Quitar todos los filtros</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Estados</div>
+        <div class="card-body">
+          <div class="legend">
+            <div class="legend-item"><span class="legend-bar lg-urgente"></span>Urgente</div>
+            <div class="legend-item"><span class="legend-bar lg-consolidada"></span>Consolidada</div>
+            <div class="legend-item"><span class="legend-bar lg-avance"></span>Max avance</div>
+            <div class="legend-item"><span class="legend-bar lg-embarque"></span>Max embarque</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">Aplicación masiva</div>
+        <div class="card-body">
+          <div class="field">
+            <label for="bulkEstado">Estado</label>
+            <select id="bulkEstado">
+              <option value="">No cambiar</option>
+              <option value="urgente">Urgente</option>
+              <option value="consolidada">Consolidada</option>
+              <option value="avance">Max avance</option>
+              <option value="embarque">Max embarque</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bulkAfectacion">Afectación</label>
+            <select id="bulkAfectacion">
+              <option value="">No cambiar</option>
+              <option value="MATERIAL">Material</option>
+              <option value="IR">IR</option>
+              <option value="CASO DE INGENIERIA">Caso de ingeniería</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bulkComentario">Comentario</label>
+            <textarea id="bulkComentario" placeholder="Se deja igual si lo dejas vacío"></textarea>
+          </div>
+          <button class="btn btn-primary" id="bulkApply" style="width:100%">Aplicar a las visibles</button>
+          <div class="progress hidden" id="bulkProgress"><div></div></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="card">
+      <div class="table-bar">
+        <div class="search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="busqueda" placeholder="Buscar orden, sales order o comentario" aria-label="Buscar en la tabla" />
+        </div>
+        <div class="chips" id="chipsFiltros"></div>
+        <div class="row-count"><b id="visCount">0</b> de <span id="totCount">0</span> órdenes</div>
+      </div>
+
+      <div class="sel-bar hidden" id="selBar">
+        <span><b id="selCount">0</b> órdenes seleccionadas · la aplicación masiva usará esta selección</span>
+        <button class="btn btn-sm btn-ghost" id="selClear">Quitar selección</button>
+      </div>
+
+      <div class="tabla-wrap">
+        <table id="tabla">
+          <thead>
+            <tr>
+              <th class="sel"><input type="checkbox" id="checkAll" aria-label="Seleccionar todas las visibles" /></th>
+              <th class="sortable" data-type="text">Sales order <span class="arrow">↕</span></th>
+              <th class="sortable" data-type="text">Item <span class="arrow">↕</span></th>
+              <th class="sortable" data-type="text">Orden <span class="arrow">↕</span></th>
+              <th class="sortable right" data-type="num">Monto <span class="arrow">↕</span></th>
+              <th class="sortable" data-type="date">Fecha prog. <span class="arrow">↕</span></th>
+              <th class="sortable" data-type="date">RDD <span class="arrow">↕</span></th>
+              <th class="sortable" data-type="text">Estado <span class="arrow">↕</span></th>
+              <th class="sortable" data-type="text">Afectación <span class="arrow">↕</span></th>
+              <th class="col-com">Comentario</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+
+        <div id="loadingState">
+          <div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div>
+        </div>
+
+        <div id="emptyState" class="state hidden">
+          <h3>Todavía no hay plan cargado</h3>
+          <p>Importa el Excel de producción para empezar a trabajar las órdenes.</p>
+          <button class="btn btn-primary" id="emptyUpload">Importar plan</button>
+        </div>
+
+        <div id="noResults" class="state hidden">
+          <h3>Ninguna orden coincide</h3>
+          <p>Ajusta la búsqueda o quita los filtros activos.</p>
+          <button class="btn" id="noResultsReset">Quitar todos los filtros</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal: reporte por correo -->
+<div class="modal-backdrop" id="emailModal" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle">
+  <div class="modal">
+    <div class="modal-header" id="emailModalTitle">Enviar reporte por correo</div>
+    <div class="modal-body">
+      <div class="field"><label for="emailTo">Destinatarios</label><input id="emailTo" placeholder="nombre@empresa.com; otro@empresa.com" /></div>
+      <div class="field"><label for="emailCc">CC (opcional)</label><input id="emailCc" placeholder="copia@empresa.com" /></div>
+      <div class="field"><label for="emailSubject">Asunto</label><input id="emailSubject" value="Reporte plan de producción RG Interiores" /></div>
+      <div class="note">Se envía a Power Automate el resumen en HTML, el screenshot del tablero y un CSV con las <b id="emailScopeCount">0</b> órdenes visibles.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="closeEmailModal">Cancelar</button>
+      <button class="btn btn-primary" id="sendEmailReport">Enviar reporte</button>
+    </div>
+  </div>
+</div>
+
+<!-- Diálogo genérico (reemplaza alert / confirm / prompt) -->
+<div class="modal-backdrop" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+  <div class="modal sm">
+    <div class="modal-header" id="dlgTitle"></div>
+    <div class="modal-body">
+      <p id="dlgMsg"></p>
+      <div class="field hidden" id="dlgInputWrap">
+        <label for="dlgInput" id="dlgInputLabel"></label>
+        <input id="dlgInput" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="dlgCancel">Cancelar</button>
+      <button class="btn btn-primary" id="dlgOk">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";import { getFirestore, collection, doc, setDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-const app=initializeApp({apiKey:"AIzaSy...",projectId:"pp-abb"});const db=getFirestore(app);const ADMIN=true;const PASSWORD="835755";const POWER_AUTOMATE_REPORT_URL="https://default372ee9e09ce04033a64ac07073a91e.cd.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/eaaffe52f1464bb395a39106bb9923f4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xUoBnD_TpULTjUZkcC2QI6XosaDABV40Ryfw9qT2K-A";let cacheEstado={},cacheComentarios={},cacheAfectacion={},cacheSemana=null,filtroKPI="",currentPlanData=[];
-$(document).ready(function(){if(ADMIN){$("#upload").show();$("#clearData").show();$("#clearDataVisible").removeClass("hidden")}});
-function excelToDate(v){if(typeof v==="number")return new Date((v-25569)*86400*1000).toISOString().split("T")[0];return v||""}function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(v||0)}function plainNumber(v){return Number(String(v||0).replace(/[^0-9.-]/g,""))||0}function calcTiempo(rdd){let hoy=new Date().toISOString().split("T")[0];if(!rdd)return"";if(rdd<hoy)return"overdue";if(rdd===hoy)return"servicio";return"entiempo"}function esc(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}function base64Utf8(text){return btoa(unescape(encodeURIComponent(text)))}function csvCell(value){const text=String(value??"");if(/[",\n]/.test(text))return'"'+text.replace(/"/g,'""')+'"';return text}
-onSnapshot(doc(db,"data_plan","plan"),(docSnap)=>{if(docSnap.exists()){let data=docSnap.data();currentPlanData=data.data||[];renderTable(currentPlanData);if(data.lastUpdate){let fecha=new Date(data.lastUpdate);document.getElementById("lastUpdate").innerHTML="Última actualización: "+fecha.toLocaleString()}}});onSnapshot(collection(db,"comentarios"),snap=>{cacheEstado={};cacheComentarios={};cacheAfectacion={};snap.forEach(d=>{cacheComentarios[d.id]=d.data().comentario||"";cacheEstado[d.id]=d.data().estado||"";cacheAfectacion[d.id]=d.data().afectacion||""});aplicarDatos()});onSnapshot(doc(db,"output","ayer"),(docSnap)=>{if(docSnap.exists()){let d=docSnap.data();$("#outAlmacen").val(d.almacen||"");$("#outIncoming").val(d.incoming||"");$("#outAccesorizado").val(d.accesorizado||"");$("#outInteriores").val(d.interiores||"")}});onSnapshot(doc(db,"semana","datos"),(docSnap)=>{if(docSnap.exists()){cacheSemana=docSnap.data();aplicarSemanaGuardada()}});
-function renderTable(data){let html="";let conteoSemana={1:0,2:0,3:0,4:0,5:0,6:0,0:0};let hoy=new Date();let inicioSemana=new Date(hoy);inicioSemana.setDate(hoy.getDate()-((hoy.getDay()+6)%7));inicioSemana.setHours(0,0,0,0);data.forEach(r=>{let so=r["Sales Order"]||"",item=r["Sales order item"]||"",id=r["Order"]||"",monto=r["Monto"]||0,fecha=excelToDate(r["Release date (actual)"]),rdd=excelToDate(r["RDD"]),t=calcTiempo(rdd);if(fecha){let partes=fecha.split("-");let f=new Date(partes[0],partes[1]-1,partes[2]);if(!isNaN(f)&&f>=inicioSemana&&f<=hoy)conteoSemana[f.getDay()]++}html+=`<tr data-id="${esc(id)}" data-monto="${monto}" data-tiempo="${t}" data-fecha="${fecha}" class="${t}"><td title="${esc(so)}">${esc(so)}</td><td title="${esc(item)}">${esc(item)}</td><td title="${esc(id)}">${esc(id)}</td><td>${money(monto)}</td><td>${esc(fecha)}</td><td>${esc(rdd)}</td><td data-estado=""><select class="estado" data-id="${esc(id)}"><option></option><option value="urgente">Urgente</option><option value="consolidada">Consolidada</option><option value="avance">MAX AVANCE</option><option value="embarque">MAX EMBARQUE</option></select></td><td><select class="afectacion" data-id="${esc(id)}"><option></option><option value="MATERIAL">MATERIAL</option><option value="IR">IR</option><option value="CASO DE INGENIERIA">CASO DE INGENIERIA</option></select></td><td><input class="comment-box" data-id="${esc(id)}" /></td></tr>`});$("#tabla tbody").html(html);if($.fn.DataTable.isDataTable('#tabla'))$('#tabla').DataTable().destroy();$('#tabla').DataTable({paging:false,info:false,searching:false,lengthChange:false,dom:'t',autoWidth:false,ordering:true});aplicarDatos();renderSemana(conteoSemana)}
-function renderSemana(conteoSemana){let dias=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];let htmlSemana="";for(let i=1;i<=6;i++){let valor=conteoSemana[i]||0;htmlSemana+=`<div class="day-box"><b>${dias[i]}</b><input type="number" class="semana-input" value="${valor}" min="0"></div>`}htmlSemana+=`<div class="day-box total"><b>Total</b><input type="number" id="totalSemana" readonly></div>`;document.getElementById("semanaData").innerHTML=htmlSemana;setTimeout(()=>{aplicarSemanaGuardada();recalcularTotalSemana()},200)}function aplicarDatos(){$("#tabla tbody tr").each(function(){let id=$(this).data("id");$(this).find(".comment-box").val(cacheComentarios[id]||"");$(this).find(".estado").val(cacheEstado[id]||"");$(this).find(".afectacion").val(cacheAfectacion[id]||"");$(this).removeClass("urgente consolidada avance embarque");if(cacheEstado[id])$(this).addClass(cacheEstado[id]);$(this).find("td[data-estado]").attr("data-estado",cacheEstado[id]||"");let t=$(this).data("tiempo");$(this).removeClass("overdue servicio entiempo");if(t)$(this).addClass(t)});aplicarFiltros()}function recalcularTotalSemana(){let total=0;$(".semana-input").each(function(){total+=parseInt($(this).val())||0});$("#totalSemana").val(total)}function aplicarSemanaGuardada(){if(!cacheSemana)return;$(".semana-input").each(function(index){if(cacheSemana["dia"+index]!==undefined)$(this).val(cacheSemana["dia"+index])});recalcularTotalSemana()}
-function aplicarFiltros(){let texto=$("#filtroOrdenes").val().trim();let listaOrdenes=texto?texto.split(/\n|,|\t/).map(x=>x.trim()).filter(x=>x!==""):[];let estado=$("#filtroEstado").val(),tiempo=$("#filtroTiempo").val(),fecha=$("#filtroFecha").val();$("#tabla tbody tr").each(function(){let ok=true,est=$(this).find("td[data-estado]").attr("data-estado"),t=$(this).data("tiempo"),af=$(this).find(".afectacion").val(),f=$(this).data("fecha"),orden=$(this).find("td:eq(2)").text().trim(),so=$(this).find("td:eq(0)").text().trim();if(estado&&est!==estado)ok=false;if(fecha&&f!==fecha)ok=false;if(tiempo==="afectadas"){if(!af)ok=false}else{if(tiempo&&t!==tiempo)ok=false}if(listaOrdenes.length>0&&!listaOrdenes.includes(orden)&&!listaOrdenes.includes(so))ok=false;if(filtroKPI==="afectadas"&&!af)ok=false;if(filtroKPI==="completas"&&af)ok=false;$(this).toggle(ok)});calcularKPIs()}function calcularKPIs(){let total=0,overdue=0,c=0,afectadas=0,montoTotalCompleto=0,overdueCompleto=0;$("#tabla tbody tr:visible").each(function(){let monto=parseFloat($(this).data("monto"))||0,t=$(this).data("tiempo"),tieneAfectacion=!!$(this).find(".afectacion").val();total+=monto;if(t==="overdue")overdue+=monto;c++;if(tieneAfectacion)afectadas++;else{montoTotalCompleto+=monto;if(t==="overdue")overdueCompleto+=monto}});let completas=Math.max(0,c-afectadas);$("#totalMonto").text(money(total));$("#totalOverdue").text(money(overdue));$("#totalOrders").text(c);$("#totalAfectadas").text(afectadas);$("#totalCompletas").text(completas);$("#montoTotalCompleto").text(money(montoTotalCompleto));$("#overdueCompleto").text(money(overdueCompleto))}
-$(document).on("click",".kpi-filter-btn",function(){let filtro=$(this).data("kpi-filter");if(filtroKPI===filtro){filtroKPI="";$(".kpi-filter-btn").removeClass("active")}else{filtroKPI=filtro;$(".kpi-filter-btn").removeClass("active");$(this).addClass("active")}aplicarFiltros()});$("#filtroEstado,#filtroTiempo,#filtroFecha").on("change",aplicarFiltros);$("#filtroOrdenes").on("input",aplicarFiltros);$("#resetFilters").on("click",function(){$("#filtroEstado,#filtroTiempo,#filtroFecha").val("");$("#filtroOrdenes").val("");filtroKPI="";$(".kpi-filter-btn").removeClass("active");aplicarFiltros()});$(document).on("input",".semana-input",function(){recalcularTotalSemana()});$(document).on("input",".semana-input",async function(){let datos={};$(".semana-input").each(function(index){datos["dia"+index]=$(this).val()||0});await setDoc(doc(db,"semana","datos"),datos)});
-$(document).on("change",".comment-box, .estado, .afectacion",async function(){let id=$(this).data("id");await setDoc(doc(db,"comentarios",id.toString()),{comentario:$(`input[data-id='${id}']`).val()||"",estado:$(`select.estado[data-id='${id}']`).val()||"",afectacion:$(`select.afectacion[data-id='${id}']`).val()||""})});$("#outAlmacen, #outIncoming, #outAccesorizado, #outInteriores").on("input",async function(){await setDoc(doc(db,"output","ayer"),{almacen:$("#outAlmacen").val()||"",incoming:$("#outIncoming").val()||"",accesorizado:$("#outAccesorizado").val()||"",interiores:$("#outInteriores").val()||""})});$("#uploadButton").on("click",function(){$("#upload").click()});$("#upload").on("change",function(e){let file=e.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=async function(evt){let wb=XLSX.read(new Uint8Array(evt.target.result),{type:'array'});let json=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);await setDoc(doc(db,"data_plan","plan"),{data:json,lastUpdate:new Date().toISOString()});e.target.value=""};reader.readAsArrayBuffer(file)});
-$(document).on("click","#bulkApply",async function(){let estadoMasivo=$("#bulkEstado").val(),afectacionMasiva=$("#bulkAfectacion").val(),comentarioMasivo=$("#bulkComentario").val().trim();if(!estadoMasivo&&!afectacionMasiva&&!comentarioMasivo){alert("Selecciona al menos un Estado, Afectación o Comentario para aplicar.");return}let filasVisibles=$("#tabla tbody tr:visible");if(filasVisibles.length===0){alert("No hay órdenes visibles para actualizar.");return}if(!confirm("Se aplicará la información a "+filasVisibles.length+" órdenes visibles. ¿Deseas continuar?"))return;for(const tr of filasVisibles){let row=$(tr),id=row.data("id");if(!id)continue;if(estadoMasivo){row.find(".estado").val(estadoMasivo);row.find("td[data-estado]").attr("data-estado",estadoMasivo);row.removeClass("urgente consolidada avance embarque").addClass(estadoMasivo)}if(afectacionMasiva)row.find(".afectacion").val(afectacionMasiva);if(comentarioMasivo)row.find(".comment-box").val(comentarioMasivo);await setDoc(doc(db,"comentarios",id.toString()),{comentario:row.find(".comment-box").val()||"",estado:row.find(".estado").val()||"",afectacion:row.find(".afectacion").val()||""})}calcularKPIs();alert("Actualización masiva completada.")});$(document).on("click","#clearData, #clearDataVisible",async function(){let pass=prompt("Ingresa la clave:");if(pass!==PASSWORD){alert("Clave incorrecta");return}if(!confirm("¿Seguro que quieres limpiar comentarios y afectaciones?"))return;try{let snap=await getDocs(collection(db,"comentarios"));for(const d of snap.docs){await setDoc(doc(db,"comentarios",d.id),{comentario:"",afectacion:""},{merge:true})}alert("Comentarios y afectaciones limpiados")}catch(e){console.error(e);alert("Error al limpiar")}});
-function getVisibleRowsExport(){let dataExport=[];$("#tabla tbody tr:visible").each(function(){let row=$(this);dataExport.push({"Sales Order":row.find("td:eq(0)").text(),"Item":row.find("td:eq(1)").text(),"Order":row.find("td:eq(2)").text(),"Monto":row.find("td:eq(3)").text(),"Fecha Prog":row.find("td:eq(4)").text(),"RDD":row.find("td:eq(5)").text(),"Estado":row.find(".estado").val()||"","Afectación":row.find(".afectacion").val()||"","Comentario":row.find(".comment-box").val()||""})});return dataExport}$(document).on("click","#downloadExcel",function(){let dataExport=getVisibleRowsExport();let ws=XLSX.utils.json_to_sheet(dataExport);let wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Datos");XLSX.writeFile(wb,"PlanProduccion.xlsx")});
-function buildReportEmailHtml(imageBase64){let now=new Date().toLocaleString("es-MX"),visibleRows=getVisibleRowsExport(),afectadas=visibleRows.filter(r=>r["Afectación"]).length,completas=visibleRows.length-afectadas,totalMonto=$("#totalMonto").text(),totalOverdue=$("#totalOverdue").text(),totalCompleto=$("#montoTotalCompleto").text();return`<p>Hola,</p><p>Comparto reporte actualizado del plan de producción RG Interiores.</p><p><b>Generado:</b> ${now}</p><ul><li><b>Órdenes visibles:</b> ${visibleRows.length}</li><li><b>Órdenes afectadas:</b> ${afectadas}</li><li><b>Órdenes completas:</b> ${completas}</li><li><b>Total programado:</b> ${totalMonto}</li><li><b>Overdue programado:</b> ${totalOverdue}</li><li><b>Monto completo:</b> ${totalCompleto}</li></ul><p>Se adjunta CSV con las órdenes visibles y screenshot del tablero.</p><p><b>Vista del tablero:</b></p><p style="font-size:12px;color:#64748b;">Si la imagen no se visualiza en Outlook, también va como archivo adjunto.</p><p><img src="data:image/png;base64,${imageBase64}" style="max-width:100%;border:1px solid #dbe3ef;border-radius:10px;" /></p><p>Saludos.</p>`}function generateCsvBase64(rows){if(rows.length===0)return base64Utf8("Sin datos\n");const headers=Object.keys(rows[0]);const csv=[headers.join(","),...rows.map(row=>headers.map(h=>csvCell(row[h])).join(","))].join("\n");return base64Utf8(csv)}async function generateReportScreenshotBase64(){if(!window.html2canvas)throw new Error("No cargó html2canvas.");const node=document.getElementById("emailSummaryArea");const canvas=await html2canvas(node,{backgroundColor:"#f3f5f8",scale:1.8});return canvas.toDataURL("image/png").split(",")[1]}
-$("#openEmailReport").on("click",function(){document.getElementById("emailModal").style.display="flex"});$("#closeEmailModal").on("click",function(){document.getElementById("emailModal").style.display="none"});$("#sendEmailReport").on("click",async function(){const to=$("#emailTo").val().trim(),cc=$("#emailCc").val().trim(),subject=$("#emailSubject").val().trim();if(!to){alert("Captura al menos un destinatario.");return}if(!POWER_AUTOMATE_REPORT_URL||POWER_AUTOMATE_REPORT_URL.includes("PEGA_AQUI")){alert("Falta configurar la URL de Power Automate en POWER_AUTOMATE_REPORT_URL.");return}const button=document.getElementById("sendEmailReport");try{button.disabled=true;button.textContent="Enviando...";const rows=getVisibleRowsExport(),imageBase64=await generateReportScreenshotBase64(),csvBase64=generateCsvBase64(rows),bodyHtml=buildReportEmailHtml(imageBase64),payload={to,cc,subject,bodyHtml,imageBase64,csvBase64};try{const response=await fetch(POWER_AUTOMATE_REPORT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});if(!response.ok)throw new Error("Power Automate respondió HTTP "+response.status);alert("Reporte enviado correctamente.");document.getElementById("emailModal").style.display="none"}catch(normalError){console.warn("Intento normal falló. Probando no-cors.",normalError);await fetch(POWER_AUTOMATE_REPORT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});alert("Solicitud enviada a Power Automate. Si el flujo está correcto, el correo llegará en unos momentos.");document.getElementById("emailModal").style.display="none"}}catch(e){console.error(e);alert("No se pudo enviar el reporte. Error: "+e.message)}finally{button.disabled=false;button.textContent="Enviar reporte"}});function setAyer(){let hoy=new Date();if(hoy.getDay()===1)hoy.setDate(hoy.getDate()-2);else hoy.setDate(hoy.getDate()-1);let d=String(hoy.getDate()).padStart(2,'0'),m=String(hoy.getMonth()+1).padStart(2,'0'),y=hoy.getFullYear(),span=document.getElementById("fechaTexto");if(span)span.innerText=d+"/"+m+"/"+y}document.addEventListener("DOMContentLoaded",()=>{setAyer();setTimeout(setAyer,500)});setInterval(setAyer,30000);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot, getDocs, writeBatch }
+  from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+/* ============================================================
+   CONFIGURACIÓN
+   ⚠️ PASSWORD y la firma (sig=) de Power Automate viajan al
+   navegador: cualquiera con el inspector las ve. Muévelas a un
+   backend o a Firebase Auth cuando puedas.
+   ============================================================ */
+const app = initializeApp({ apiKey:"AIzaSy...", projectId:"pp-abb" });
+const db  = getFirestore(app);
+const ADMIN = true;
+const PASSWORD = "835755";
+const POWER_AUTOMATE_REPORT_URL = "https://default372ee9e09ce04033a64ac07073a91e.cd.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/eaaffe52f1464bb395a39106bb9923f4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=xUoBnD_TpULTjUZkcC2QI6XosaDABV40Ryfw9qT2K-A";
+
+// Cambia a { locale:"es-MX", code:"MXN" } si los montos son pesos.
+const MONEDA = { locale:"en-US", code:"USD" };
+
+/* ---------- Estado ---------- */
+let cacheEstado = {}, cacheComentarios = {}, cacheAfectacion = {}, cacheSemana = null;
+let currentPlanData = [];
+let filtroKPI = "";
+let seleccion = new Set();
+let sortCol = null, sortDir = 1;
+let cargado = false;
+let lastUpdateISO = null;
+let kpi = { total:0, overdue:0, completo:0, overdueCompleto:0, afectadas:0, completas:0, visibles:0 };
+
+/* ---------- Utilidades ---------- */
+const fmt0 = new Intl.NumberFormat(MONEDA.locale, { style:"currency", currency:MONEDA.code, minimumFractionDigits:0, maximumFractionDigits:0 });
+const fmt2 = new Intl.NumberFormat(MONEDA.locale, { style:"currency", currency:MONEDA.code, minimumFractionDigits:2, maximumFractionDigits:2 });
+const money        = v => fmt0.format(Number(v) || 0);
+const moneyExacto  = v => fmt2.format(Number(v) || 0);
+function moneyCompacto(v){
+  const n = Number(v) || 0, a = Math.abs(n), s = n < 0 ? "-" : "";
+  if (a >= 1e6) return s + "$" + (a / 1e6).toFixed(2) + "M";
+  if (a >= 1e4) return s + "$" + Math.round(a / 1e3) + "K";
+  return money(n);
+}
+const MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+function hoyISO(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+function excelToDate(v){
+  if (typeof v === "number") return new Date((v - 25569) * 86400 * 1000).toISOString().split("T")[0];
+  return v || "";
+}
+function fechaCorta(iso){
+  const p = String(iso || "").split("-");
+  if (p.length !== 3) return "";
+  const anioActual = new Date().getFullYear();
+  const base = `${p[2]} ${MESES[Number(p[1]) - 1] || ""}`;
+  return Number(p[0]) === anioActual ? base : `${base} ${p[0].slice(2)}`;
+}
+function diasHasta(iso){
+  const p = String(iso || "").split("-");
+  if (p.length !== 3) return null;
+  const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  if (isNaN(d)) return null;
+  const h = new Date(); h.setHours(0,0,0,0);
+  return Math.round((d - h) / 86400000);
+}
+function calcTiempo(rdd){
+  const hoy = hoyISO();
+  if (!rdd) return "";
+  if (rdd < hoy) return "overdue";
+  if (rdd === hoy) return "servicio";
+  return "entiempo";
+}
+function esc(v){
+  return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+const base64Utf8 = t => btoa(unescape(encodeURIComponent(t)));
+function csvCell(v){ const t = String(v ?? ""); return /[",\n]/.test(t) ? '"' + t.replaceAll('"','""') + '"' : t; }
+function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function tiempoRelativo(iso){
+  const s = (Date.now() - new Date(iso)) / 1000;
+  if (s < 60)    return "hace unos segundos";
+  if (s < 3600)  return `hace ${Math.floor(s / 60)} min`;
+  if (s < 86400) return `hace ${Math.floor(s / 3600)} h`;
+  return new Date(iso).toLocaleString("es-MX");
+}
+
+/* ---------- Toasts, indicador de guardado y diálogos ---------- */
+function toast(msg, tipo = ""){
+  const el = $(`<div class="toast ${tipo}"></div>`).text(msg);
+  $("#toasts").append(el);
+  setTimeout(() => el.fadeOut(180, () => el.remove()), 3200);
+}
+let pendientes = 0;
+function setSync(state, texto){
+  $("#syncPill").attr("data-state", state);
+  $("#syncText").text(texto);
+}
+async function guardar(fn){
+  pendientes++; setSync("saving", "Guardando…");
+  try {
+    await fn();
+    pendientes = Math.max(0, pendientes - 1);
+    if (pendientes === 0) setSync("idle", "Guardado");
+  } catch (e) {
+    pendientes = Math.max(0, pendientes - 1);
+    console.error(e);
+    setSync("error", "Error al guardar");
+    toast("No se pudo guardar el cambio", "err");
+  }
+}
+
+let dlgResolve = null, dlgFocoPrevio = null;
+function abrirDialogo({ titulo, mensaje, ok = "Aceptar", input = false, inputLabel = "", inputType = "text" }){
+  return new Promise(res => {
+    dlgResolve = res;
+    dlgFocoPrevio = document.activeElement;
+    $("#dlgTitle").text(titulo);
+    $("#dlgMsg").text(mensaje);
+    $("#dlgOk").text(ok);
+    $("#dlgInputWrap").toggleClass("hidden", !input);
+    $("#dlgInputLabel").text(inputLabel);
+    $("#dlgInput").attr("type", inputType).val("");
+    $("#dlg").addClass("open");
+    setTimeout(() => (input ? $("#dlgInput") : $("#dlgOk")).trigger("focus"), 40);
+  });
+}
+function cerrarDialogo(valor){
+  $("#dlg").removeClass("open");
+  if (dlgFocoPrevio && dlgFocoPrevio.focus) dlgFocoPrevio.focus();
+  if (dlgResolve){ const r = dlgResolve; dlgResolve = null; r(valor); }
+}
+const confirmar = (titulo, mensaje, ok = "Continuar") => abrirDialogo({ titulo, mensaje, ok });
+$("#dlgOk").on("click", () => cerrarDialogo($("#dlgInputWrap").hasClass("hidden") ? true : ($("#dlgInput").val() || "")));
+$("#dlgCancel").on("click", () => cerrarDialogo(false));
+$("#dlg").on("click", e => { if (e.target.id === "dlg") cerrarDialogo(false); });
+$("#dlgInput").on("keydown", e => { if (e.key === "Enter") $("#dlgOk").trigger("click"); });
+$(document).on("keydown", e => {
+  if (e.key !== "Escape") return;
+  if ($("#dlg").hasClass("open")) cerrarDialogo(false);
+  else if ($("#emailModal").hasClass("open")) $("#emailModal").removeClass("open");
+});
+
+/* ============================================================
+   FIRESTORE — mismas rutas y campos que la versión original
+   ============================================================ */
+onSnapshot(doc(db, "data_plan", "plan"), snap => {
+  cargado = true;
+  $("#loadingState").addClass("hidden");
+  if (snap.exists()){
+    const data = snap.data();
+    currentPlanData = data.data || [];
+    lastUpdateISO = data.lastUpdate || null;
+    renderTable(currentPlanData);
+    pintarUltimaActualizacion();
+  } else {
+    currentPlanData = [];
+    renderTable([]);
+    $("#lastUpdate").text("Sin plan cargado");
+  }
+});
+
+onSnapshot(collection(db, "comentarios"), snap => {
+  cacheEstado = {}; cacheComentarios = {}; cacheAfectacion = {};
+  snap.forEach(d => {
+    const v = d.data();
+    cacheComentarios[d.id] = v.comentario || "";
+    cacheEstado[d.id]      = v.estado || "";
+    cacheAfectacion[d.id]  = v.afectacion || "";
+  });
+  aplicarDatos();
+});
+
+onSnapshot(doc(db, "output", "ayer"), snap => {
+  if (!snap.exists()) return;
+  const d = snap.data();
+  [["#outAlmacen", d.almacen], ["#outIncoming", d.incoming],
+   ["#outAccesorizado", d.accesorizado], ["#outInteriores", d.interiores]].forEach(([sel, val]) => {
+    const el = $(sel);
+    if (el[0] !== document.activeElement) el.val(val || "");   // no pisar lo que el usuario escribe
+  });
+});
+
+onSnapshot(doc(db, "semana", "datos"), snap => {
+  if (!snap.exists()) return;
+  cacheSemana = snap.data();
+  aplicarSemanaGuardada();
+});
+
+/* ============================================================
+   RENDER DE LA TABLA
+   ============================================================ */
+function renderTable(data){
+  const wrap = document.querySelector(".tabla-wrap");
+  const scrollPrev = wrap ? wrap.scrollTop : 0;
+
+  const conteoSemana = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
+  const hoy = new Date();
+  const inicioSemana = new Date(hoy);
+  inicioSemana.setDate(hoy.getDate() - ((hoy.getDay() + 6) % 7));
+  inicioSemana.setHours(0,0,0,0);
+
+  let html = "";
+  data.forEach(r => {
+    const so    = r["Sales Order"] || "";
+    const item  = r["Sales order item"] || "";
+    const id    = r["Order"] || "";
+    const monto = Number(r["Monto"]) || 0;
+    const fecha = excelToDate(r["Release date (actual)"]);
+    const rdd   = excelToDate(r["RDD"]);
+    const t     = calcTiempo(rdd);
+
+    if (fecha){
+      const p = fecha.split("-");
+      const f = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+      if (!isNaN(f) && f >= inicioSemana && f <= hoy) conteoSemana[f.getDay()]++;
+    }
+
+    const dias = diasHasta(rdd);
+    let rddHtml = rdd ? `<span class="num">${esc(fechaCorta(rdd))}</span>` : '<span class="muted">—</span>';
+    if (t === "overdue" && dias !== null) rddHtml += `<span class="badge badge-overdue">${Math.abs(dias)}d</span>`;
+    else if (t === "servicio")            rddHtml += '<span class="badge badge-servicio">hoy</span>';
+
+    html += `<tr data-id="${esc(id)}" data-so="${esc(so)}" data-item="${esc(item)}" data-monto="${monto}" data-tiempo="${t}" data-fecha="${esc(fecha)}" data-rdd="${esc(rdd)}">
+      <td class="sel"><input type="checkbox" class="row-check" aria-label="Seleccionar orden ${esc(id)}" /></td>
+      <td data-v="${esc(so)}" title="${esc(so)}">${esc(so)}</td>
+      <td data-v="${esc(item)}">${esc(item)}</td>
+      <td data-v="${esc(id)}" class="col-order" title="${esc(id)}">${esc(id)}</td>
+      <td data-v="${monto}" class="num right" title="${esc(moneyExacto(monto))}">${money(monto)}</td>
+      <td data-v="${esc(fecha)}" title="${esc(fecha)}">${esc(fechaCorta(fecha)) || '<span class="muted">—</span>'}</td>
+      <td data-v="${esc(rdd)}" title="${esc(rdd)}">${rddHtml}</td>
+      <td><select class="ghost estado" data-id="${esc(id)}" data-v="" aria-label="Estado de la orden ${esc(id)}">
+        <option value="">Sin estado</option>
+        <option value="urgente">Urgente</option>
+        <option value="consolidada">Consolidada</option>
+        <option value="avance">Max avance</option>
+        <option value="embarque">Max embarque</option>
+      </select></td>
+      <td><select class="ghost afectacion" data-id="${esc(id)}" data-v="" aria-label="Afectación de la orden ${esc(id)}">
+        <option value="">Sin afectación</option>
+        <option value="MATERIAL">Material</option>
+        <option value="IR">IR</option>
+        <option value="CASO DE INGENIERIA">Caso de ingeniería</option>
+      </select></td>
+      <td class="col-com"><input class="comment-box" data-id="${esc(id)}" placeholder="Agregar comentario" aria-label="Comentario de la orden ${esc(id)}" /></td>
+    </tr>`;
+  });
+
+  $("#tbody").html(html);
+  $("#emptyState").toggleClass("hidden", !(cargado && data.length === 0));
+  $("#tabla").toggleClass("hidden", cargado && data.length === 0);
+
+  aplicarDatos();
+  ordenarTabla();
+  renderSemana(conteoSemana);
+  if (wrap) wrap.scrollTop = scrollPrev;
+}
+
+function renderSemana(conteo){
+  const dias = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+  let html = "";
+  for (let i = 1; i <= 6; i++){
+    html += `<div class="day-box"><b>${dias[i]}</b><input type="number" class="semana-input" value="${conteo[i] || 0}" min="0" aria-label="Órdenes liberadas ${dias[i]}" /></div>`;
+  }
+  html += '<div class="day-box total"><b>Total</b><input type="number" id="totalSemana" readonly aria-label="Total de la semana" /></div>';
+  $("#semanaData").html(html);
+  aplicarSemanaGuardada();
+  recalcularTotalSemana();
+}
+
+/* Vuelca la cache de Firestore sobre las filas sin pisar el campo que
+   el usuario tiene enfocado (este era el bug que borraba comentarios). */
+function aplicarDatos(){
+  const activo = document.activeElement;
+  $("#tbody tr").each(function(){
+    const $tr = $(this);
+    const id  = String($tr.data("id") ?? "");
+
+    const $com = $tr.find(".comment-box");
+    if ($com[0] !== activo) $com.val(cacheComentarios[id] || "");
+
+    const $est = $tr.find(".estado");
+    if ($est[0] !== activo) $est.val(cacheEstado[id] || "");
+    $est.attr("data-v", cacheEstado[id] || "");
+
+    const $af = $tr.find(".afectacion");
+    if ($af[0] !== activo) $af.val(cacheAfectacion[id] || "");
+    $af.attr("data-v", cacheAfectacion[id] || "");
+
+    $tr.removeClass("urgente consolidada avance embarque overdue servicio entiempo");
+    if (cacheEstado[id]) $tr.addClass(cacheEstado[id]);
+    const t = $tr.data("tiempo");
+    if (t) $tr.addClass(t);
+
+    $tr.toggleClass("selected", seleccion.has(id));
+    $tr.find(".row-check").prop("checked", seleccion.has(id));
+  });
+  actualizarSeleccion();
+  aplicarFiltros();
+}
+
+function recalcularTotalSemana(){
+  let total = 0;
+  $(".semana-input").each(function(){ total += parseInt($(this).val(), 10) || 0; });
+  $("#totalSemana").val(total);
+}
+function aplicarSemanaGuardada(){
+  if (!cacheSemana) return;
+  $(".semana-input").each(function(i){
+    if (cacheSemana["dia" + i] !== undefined && this !== document.activeElement) $(this).val(cacheSemana["dia" + i]);
+  });
+  recalcularTotalSemana();
+}
+
+/* ============================================================
+   ORDENAMIENTO NATIVO (sustituye a DataTables)
+   Ordena por el valor real: Monto por número, fechas por ISO.
+   ============================================================ */
+function valorCelda($td, tipo){
+  const ctrl = $td.find("select, input").not('[type="checkbox"]');
+  if (ctrl.length) return String(ctrl.val() || "").toLowerCase();
+  const v = $td.attr("data-v") ?? $td.text();
+  return tipo === "num" ? (parseFloat(v) || 0) : String(v || "").toLowerCase();
+}
+function ordenarTabla(){
+  if (sortCol === null) return;
+  const tipo  = $("#tabla thead th").eq(sortCol).data("type") || "text";
+  const filas = $("#tbody tr").get();
+  filas.sort((a, b) => {
+    const va = valorCelda($(a).children("td").eq(sortCol), tipo);
+    const vb = valorCelda($(b).children("td").eq(sortCol), tipo);
+    const av = va === "" || va === null || va === undefined;
+    const bv = vb === "" || vb === null || vb === undefined;
+    if (av && bv) return 0;
+    if (av) return 1;          // los vacíos siempre al final
+    if (bv) return -1;
+    if (va < vb) return -sortDir;
+    if (va > vb) return  sortDir;
+    return 0;
+  });
+  $("#tbody").append(filas);
+}
+$(document).on("click", "#tabla thead th.sortable", function(){
+  const idx = $(this).index();
+  sortDir = (sortCol === idx) ? -sortDir : 1;
+  sortCol = idx;
+  $("#tabla thead th").removeAttr("aria-sort").find(".arrow").text("↕");
+  $(this).attr("aria-sort", sortDir === 1 ? "ascending" : "descending").find(".arrow").text(sortDir === 1 ? "↑" : "↓");
+  ordenarTabla();
+});
+
+/* ============================================================
+   FILTROS
+   ============================================================ */
+function aplicarFiltros(){
+  const texto  = ($("#filtroOrdenes").val() || "").trim();
+  const lista  = texto ? texto.split(/\n|,|\t/).map(x => x.trim()).filter(Boolean) : [];
+  const estado = $("#filtroEstado").val();
+  const tiempo = $("#filtroTiempo").val();
+  const fecha  = $("#filtroFecha").val();
+  const q      = ($("#busqueda").val() || "").trim().toLowerCase();
+
+  $("#tbody tr").each(function(){
+    const $tr = $(this);
+    const est = $tr.find(".estado").val() || "";
+    const af  = $tr.find(".afectacion").val() || "";
+    const t   = $tr.data("tiempo") || "";
+    const f   = $tr.data("fecha") || "";
+    const so  = String($tr.data("so") ?? "");
+    const id  = String($tr.data("id") ?? "");
+    let ok = true;
+
+    if (estado && est !== estado) ok = false;
+    if (fecha && f !== fecha) ok = false;
+    if (tiempo === "afectadas") { if (!af) ok = false; }
+    else if (tiempo && t !== tiempo) ok = false;
+    if (lista.length && !lista.includes(id) && !lista.includes(so)) ok = false;
+
+    if (filtroKPI === "afectadas" && !af) ok = false;
+    if (filtroKPI === "completas" && af)  ok = false;
+    if (filtroKPI === "overdue" && t !== "overdue") ok = false;
+
+    if (q){
+      const heno = (so + " " + $tr.data("item") + " " + id + " " + ($tr.find(".comment-box").val() || "")).toLowerCase();
+      if (!heno.includes(q)) ok = false;
+    }
+    $tr.toggle(ok);
+  });
+
+  renderChips({ estado, tiempo, fecha, lista, q });
+  calcularKPIs();
+}
+
+function renderChips({ estado, tiempo, fecha, lista, q }){
+  const nombres = { urgente:"Urgente", consolidada:"Consolidada", avance:"Max avance", embarque:"Max embarque",
+                    overdue:"Overdue", servicio:"Servicio", entiempo:"En tiempo", afectadas:"Afectadas", completas:"Completas" };
+  const chips = [];
+  if (estado)        chips.push(["filtroEstado",  "Estado: " + (nombres[estado] || estado)]);
+  if (tiempo)        chips.push(["filtroTiempo",  "Estatus: " + (nombres[tiempo] || tiempo)]);
+  if (fecha)         chips.push(["filtroFecha",   "Fecha: " + fechaCorta(fecha)]);
+  if (lista.length)  chips.push(["filtroOrdenes", `Lista: ${lista.length} órdenes`]);
+  if (q)             chips.push(["busqueda",      `Búsqueda: “${q}”`]);
+  if (filtroKPI)     chips.push(["kpi",           "KPI: " + (nombres[filtroKPI] || filtroKPI)]);
+
+  $("#chipsFiltros").html(chips.map(([k, label]) =>
+    `<span class="chip">${esc(label)}<button type="button" data-clear="${k}" aria-label="Quitar filtro ${esc(label)}">×</button></span>`
+  ).join(""));
+}
+
+$(document).on("click", ".chip button", function(){
+  const k = $(this).data("clear");
+  if (k === "kpi"){ filtroKPI = ""; $(".kpi-card.is-filter").removeClass("active"); }
+  else $("#" + k).val("");
+  aplicarFiltros();
+});
+
+/* ============================================================
+   KPIs — siempre se calculan sobre lo que está visible.
+   Por eso el contador “X de Y” y los chips: para que nadie lea
+   un total filtrado creyendo que es el global.
+   ============================================================ */
+function calcularKPIs(){
+  let total = 0, overdue = 0, completo = 0, overdueCompleto = 0, afectadas = 0, visibles = 0;
+  $("#tbody tr:visible").each(function(){
+    const $tr = $(this);
+    const monto = parseFloat($tr.data("monto")) || 0;
+    const t = $tr.data("tiempo");
+    const conAfectacion = !!$tr.find(".afectacion").val();
+    total += monto;
+    if (t === "overdue") overdue += monto;
+    visibles++;
+    if (conAfectacion) afectadas++;
+    else {
+      completo += monto;
+      if (t === "overdue") overdueCompleto += monto;
+    }
+  });
+  const completas = Math.max(0, visibles - afectadas);
+  kpi = { total, overdue, completo, overdueCompleto, afectadas, completas, visibles };
+
+  const set = (id, val, exacto) => $(id).text(val).attr("title", exacto || "");
+  set("#totalMonto",        moneyCompacto(total),           moneyExacto(total));
+  set("#totalOverdue",      moneyCompacto(overdue),         moneyExacto(overdue));
+  set("#montoTotalCompleto",moneyCompacto(completo),        moneyExacto(completo));
+  set("#overdueCompleto",   moneyCompacto(overdueCompleto), moneyExacto(overdueCompleto));
+  $("#totalAfectadas").text(afectadas);
+  $("#totalCompletas").text(completas);
+  $("#totalOrders").text(visibles);
+
+  const pct = total > 0 ? Math.round((overdue / total) * 100) : 0;
+  $("#subTotal").text(`${visibles} ${visibles === 1 ? "orden" : "órdenes"}`);
+  $("#subOverdue").text(`${pct}% del total`);
+  $("#subAfectadas").text(visibles ? `${Math.round((afectadas / visibles) * 100)}% de las visibles` : "bloqueadas");
+  $("#subCompletas").text(visibles ? `${Math.round((completas / visibles) * 100)}% de las visibles` : "listas para correr");
+
+  $("#visCount").text(visibles);
+  $("#totCount").text(currentPlanData.length);
+  $("#emailScopeCount").text(visibles);
+  $("#noResults").toggleClass("hidden", !(currentPlanData.length > 0 && visibles === 0));
+  actualizarBotonMasivo();
+}
+
+$(document).on("click", ".kpi-card.is-filter", function(){
+  const f = $(this).data("kpi-filter");
+  filtroKPI = (filtroKPI === f) ? "" : f;
+  $(".kpi-card.is-filter").removeClass("active");
+  if (filtroKPI) $(this).addClass("active");
+  aplicarFiltros();
+});
+
+$("#filtroEstado, #filtroTiempo, #filtroFecha").on("change", aplicarFiltros);
+$("#filtroOrdenes, #busqueda").on("input", debounce(aplicarFiltros, 150));
+$("#resetFilters, #noResultsReset").on("click", function(){
+  $("#filtroEstado, #filtroTiempo, #filtroFecha, #filtroOrdenes, #busqueda").val("");
+  filtroKPI = "";
+  $(".kpi-card.is-filter").removeClass("active");
+  aplicarFiltros();
+});
+
+/* ============================================================
+   SELECCIÓN DE FILAS
+   ============================================================ */
+function actualizarSeleccion(){
+  const n = seleccion.size;
+  $("#selCount").text(n);
+  $("#selBar").toggleClass("hidden", n === 0);
+  const visibles = $("#tbody tr:visible").length;
+  const marcadas = $("#tbody tr:visible .row-check:checked").length;
+  $("#checkAll").prop("checked", visibles > 0 && marcadas === visibles)
+                .prop("indeterminate", marcadas > 0 && marcadas < visibles);
+  actualizarBotonMasivo();
+}
+function actualizarBotonMasivo(){
+  const n = seleccion.size;
+  const visibles = $("#tbody tr:visible").length;
+  $("#bulkApply").text(n > 0 ? `Aplicar a ${n} seleccionadas` : `Aplicar a las ${visibles} visibles`);
+}
+$(document).on("change", ".row-check", function(){
+  const $tr = $(this).closest("tr");
+  const id  = String($tr.data("id") ?? "");
+  if (this.checked) seleccion.add(id); else seleccion.delete(id);
+  $tr.toggleClass("selected", this.checked);
+  actualizarSeleccion();
+});
+$("#checkAll").on("change", function(){
+  const marcar = this.checked;
+  $("#tbody tr:visible").each(function(){
+    const id = String($(this).data("id") ?? "");
+    if (marcar) seleccion.add(id); else seleccion.delete(id);
+    $(this).toggleClass("selected", marcar).find(".row-check").prop("checked", marcar);
+  });
+  actualizarSeleccion();
+});
+$("#selClear").on("click", function(){
+  seleccion.clear();
+  $("#tbody tr").removeClass("selected").find(".row-check").prop("checked", false);
+  actualizarSeleccion();
+});
+
+/* ============================================================
+   EDICIÓN INLINE — guarda en comentarios/{orden}
+   ============================================================ */
+function guardarFila(id){
+  const idStr = String(id ?? "");
+  if (!idStr) return;                                  // antes reventaba con órdenes sin ID
+  const $tr = $(`#tbody tr[data-id="${CSS.escape(idStr)}"]`);
+  if (!$tr.length) return;
+  const payload = {
+    comentario: $tr.find(".comment-box").val() || "",
+    estado:     $tr.find(".estado").val() || "",
+    afectacion: $tr.find(".afectacion").val() || ""
+  };
+  guardar(() => setDoc(doc(db, "comentarios", idStr), payload));
+}
+$(document).on("change", ".estado, .afectacion", function(){
+  $(this).attr("data-v", $(this).val() || "");
+  const $tr = $(this).closest("tr");
+  if ($(this).hasClass("estado")){
+    $tr.removeClass("urgente consolidada avance embarque");
+    if ($(this).val()) $tr.addClass($(this).val());
+  }
+  guardarFila($(this).data("id"));
+  aplicarFiltros();
+});
+const guardarComentario = debounce(id => guardarFila(id), 800);
+$(document).on("input", ".comment-box", function(){ guardarComentario($(this).data("id")); });
+$(document).on("change", ".comment-box", function(){ guardarFila($(this).data("id")); });
+
+/* Semana y Output: antes escribían a Firestore en CADA tecla. Ahora van con debounce. */
+const guardarSemana = debounce(() => {
+  const datos = {};
+  $(".semana-input").each(function(i){ datos["dia" + i] = $(this).val() || 0; });
+  guardar(() => setDoc(doc(db, "semana", "datos"), datos));
+}, 600);
+$(document).on("input", ".semana-input", function(){ recalcularTotalSemana(); guardarSemana(); });
+
+const guardarOutput = debounce(() => {
+  guardar(() => setDoc(doc(db, "output", "ayer"), {
+    almacen:      $("#outAlmacen").val() || "",
+    incoming:     $("#outIncoming").val() || "",
+    accesorizado: $("#outAccesorizado").val() || "",
+    interiores:   $("#outInteriores").val() || ""
+  }));
+}, 600);
+$("#outAlmacen, #outIncoming, #outAccesorizado, #outInteriores").on("input", guardarOutput);
+
+/* ============================================================
+   IMPORTAR / EXPORTAR
+   ============================================================ */
+$("#uploadButton, #emptyUpload").on("click", () => $("#upload").trigger("click"));
+$("#upload").on("change", function(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async evt => {
+    try {
+      const wb   = XLSX.read(new Uint8Array(evt.target.result), { type:"array" });
+      const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      if (!json.length){ toast("El archivo no tiene filas", "err"); return; }
+      await guardar(() => setDoc(doc(db, "data_plan", "plan"), { data:json, lastUpdate:new Date().toISOString() }));
+      toast(`Plan importado · ${json.length} órdenes`, "ok");
+    } catch (err){
+      console.error(err);
+      toast("No se pudo leer el archivo", "err");
+    } finally {
+      e.target.value = "";
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+/* Lee de los data-attributes, no del texto pintado: el monto sale como
+   número real y las fechas en ISO, listas para Excel. */
+function getVisibleRowsExport(){
+  const out = [];
+  $("#tbody tr:visible").each(function(){
+    const $tr = $(this);
+    out.push({
+      "Sales Order": String($tr.data("so") ?? ""),
+      "Item":        String($tr.data("item") ?? ""),
+      "Order":       String($tr.data("id") ?? ""),
+      "Monto":       parseFloat($tr.data("monto")) || 0,
+      "Fecha Prog":  String($tr.data("fecha") ?? ""),
+      "RDD":         String($tr.data("rdd") ?? ""),
+      "Estatus":     String($tr.data("tiempo") ?? ""),
+      "Estado":      $tr.find(".estado").val() || "",
+      "Afectación":  $tr.find(".afectacion").val() || "",
+      "Comentario":  $tr.find(".comment-box").val() || ""
+    });
+  });
+  return out;
+}
+$("#downloadExcel").on("click", function(){
+  const rows = getVisibleRowsExport();
+  if (!rows.length){ toast("No hay órdenes visibles para exportar", "err"); return; }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws["!cols"] = [{wch:14},{wch:8},{wch:14},{wch:14},{wch:12},{wch:12},{wch:10},{wch:14},{wch:20},{wch:46}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Datos");
+  XLSX.writeFile(wb, `PlanProduccion_${hoyISO()}.xlsx`);
+  toast(`${rows.length} órdenes exportadas`, "ok");
+});
+
+/* ============================================================
+   APLICACIÓN MASIVA — writeBatch en lotes de 400 con progreso
+   ============================================================ */
+function filasObjetivo(){
+  return seleccion.size > 0
+    ? $("#tbody tr").filter(function(){ return seleccion.has(String($(this).data("id") ?? "")); })
+    : $("#tbody tr:visible");
+}
+$("#bulkApply").on("click", async function(){
+  const estadoM = $("#bulkEstado").val();
+  const afM     = $("#bulkAfectacion").val();
+  const comM    = $("#bulkComentario").val().trim();
+
+  if (!estadoM && !afM && !comM){ toast("Elige un estado, una afectación o escribe un comentario", "err"); return; }
+  const filas = filasObjetivo().get();
+  if (!filas.length){ toast("No hay órdenes en el alcance", "err"); return; }
+
+  const alcance = seleccion.size > 0 ? "seleccionadas" : "visibles";
+  const cambios = [estadoM && "estado", afM && "afectación", comM && "comentario"].filter(Boolean).join(", ");
+  const ok = await confirmar("Aplicación masiva",
+    `Se actualizará ${cambios} en ${filas.length} órdenes ${alcance}.`, "Aplicar");
+  if (!ok) return;
+
+  const $btn = $("#bulkApply");
+  const $prog = $("#bulkProgress").removeClass("hidden");
+  $btn.prop("disabled", true);
+  let hechas = 0;
+
+  try {
+    for (let i = 0; i < filas.length; i += 400){
+      const lote  = writeBatch(db);
+      const trozo = filas.slice(i, i + 400);
+
+      trozo.forEach(tr => {
+        const $tr = $(tr);
+        const id  = String($tr.data("id") ?? "");
+        if (!id) return;
+        if (estadoM){
+          $tr.find(".estado").val(estadoM).attr("data-v", estadoM);
+          $tr.removeClass("urgente consolidada avance embarque").addClass(estadoM);
+        }
+        if (afM)  $tr.find(".afectacion").val(afM).attr("data-v", afM);
+        if (comM) $tr.find(".comment-box").val(comM);
+        lote.set(doc(db, "comentarios", id), {
+          comentario: $tr.find(".comment-box").val() || "",
+          estado:     $tr.find(".estado").val() || "",
+          afectacion: $tr.find(".afectacion").val() || ""
+        });
+      });
+
+      await lote.commit();
+      hechas += trozo.length;
+      $prog.find("div").css("width", Math.round((hechas / filas.length) * 100) + "%");
+    }
+    toast(`${hechas} órdenes actualizadas`, "ok");
+    aplicarFiltros();
+  } catch (e){
+    console.error(e);
+    toast("No se pudo completar la actualización masiva", "err");
+  } finally {
+    $btn.prop("disabled", false);
+    $prog.addClass("hidden").find("div").css("width", 0);
+    actualizarBotonMasivo();
+  }
+});
+
+/* ============================================================
+   LIMPIAR — igual que antes: borra comentario y afectación, deja el estado
+   ============================================================ */
+if (ADMIN) $("#clearDataVisible").removeClass("hidden");
+
+$("#clearDataVisible").on("click", async function(){
+  const clave = await abrirDialogo({
+    titulo: "Limpiar comentarios",
+    mensaje: "Se borran los comentarios y las afectaciones de todas las órdenes. Los estados se conservan.",
+    ok: "Limpiar",
+    input: true,
+    inputLabel: "Clave de administrador",
+    inputType: "password"
+  });
+  if (clave === false) return;
+  if (clave !== PASSWORD){ toast("Clave incorrecta", "err"); return; }
+
+  try {
+    setSync("saving", "Limpiando…");
+    const snap = await getDocs(collection(db, "comentarios"));
+    for (let i = 0; i < snap.docs.length; i += 400){
+      const lote = writeBatch(db);
+      snap.docs.slice(i, i + 400).forEach(d => {
+        lote.set(doc(db, "comentarios", d.id), { comentario:"", afectacion:"" }, { merge:true });
+      });
+      await lote.commit();
+    }
+    setSync("idle", "Guardado");
+    toast("Comentarios y afectaciones limpiados", "ok");
+  } catch (e){
+    console.error(e);
+    setSync("error", "Error al guardar");
+    toast("No se pudo limpiar", "err");
+  }
+});
+
+/* ============================================================
+   REPORTE POR CORREO
+   ============================================================ */
+function buildReportEmailHtml(imageBase64){
+  const ahora = new Date().toLocaleString("es-MX");
+  return `<p>Hola,</p>
+<p>Comparto el reporte actualizado del plan de producción RG Interiores.</p>
+<p><b>Generado:</b> ${ahora}</p>
+<ul>
+  <li><b>Órdenes en el reporte:</b> ${kpi.visibles}</li>
+  <li><b>Órdenes afectadas:</b> ${kpi.afectadas}</li>
+  <li><b>Órdenes completas:</b> ${kpi.completas}</li>
+  <li><b>Total programado:</b> ${moneyExacto(kpi.total)}</li>
+  <li><b>Overdue programado:</b> ${moneyExacto(kpi.overdue)}</li>
+  <li><b>Monto completo:</b> ${moneyExacto(kpi.completo)}</li>
+  <li><b>Overdue completo:</b> ${moneyExacto(kpi.overdueCompleto)}</li>
+</ul>
+<p>Se adjunta el CSV con las órdenes del reporte y el screenshot del tablero.</p>
+<p><img src="data:image/png;base64,${imageBase64}" alt="Tablero del plan de producción" style="max-width:100%;border:1px solid #e2e8f0;border-radius:10px;" /></p>
+<p style="font-size:12px;color:#64748b;">Si la imagen no se ve en Outlook, también va como archivo adjunto.</p>
+<p>Saludos.</p>`;
+}
+function generateCsvBase64(rows){
+  if (!rows.length) return base64Utf8("Sin datos\n");
+  const headers = Object.keys(rows[0]);
+  const csv = [headers.join(","), ...rows.map(r => headers.map(h => csvCell(r[h])).join(","))].join("\n");
+  return base64Utf8("\uFEFF" + csv);   // BOM para que Excel respete los acentos
+}
+async function generateReportScreenshotBase64(){
+  if (!window.html2canvas) throw new Error("html2canvas no cargó");
+  const canvas = await html2canvas(document.getElementById("emailSummaryArea"), {
+    backgroundColor: "#f4f6f9", scale: 1.5
+  });
+  return canvas.toDataURL("image/png").split(",")[1];
+}
+const emailsValidos = s => s.split(/[;,]/).map(x => x.trim()).filter(Boolean)
+  .every(x => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x));
+
+$("#openEmailReport").on("click", () => { $("#emailModal").addClass("open"); $("#emailTo").trigger("focus"); });
+$("#closeEmailModal").on("click", () => $("#emailModal").removeClass("open"));
+$("#emailModal").on("click", e => { if (e.target.id === "emailModal") $("#emailModal").removeClass("open"); });
+
+$("#sendEmailReport").on("click", async function(){
+  const to = $("#emailTo").val().trim();
+  const cc = $("#emailCc").val().trim();
+  const subject = $("#emailSubject").val().trim();
+
+  if (!to){ toast("Escribe al menos un destinatario", "err"); return; }
+  if (!emailsValidos(to) || (cc && !emailsValidos(cc))){ toast("Revisa el formato de los correos", "err"); return; }
+  if (!POWER_AUTOMATE_REPORT_URL || POWER_AUTOMATE_REPORT_URL.includes("PEGA_AQUI")){
+    toast("Falta configurar POWER_AUTOMATE_REPORT_URL", "err"); return;
+  }
+
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = "Enviando…";
+  try {
+    const rows        = getVisibleRowsExport();
+    const imageBase64 = await generateReportScreenshotBase64();
+    const csvBase64   = generateCsvBase64(rows);
+    const bodyHtml    = buildReportEmailHtml(imageBase64);
+    const payload     = { to, cc, subject, bodyHtml, imageBase64, csvBase64 };
+
+    try {
+      const res = await fetch(POWER_AUTOMATE_REPORT_URL, {
+        method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Power Automate respondió HTTP " + res.status);
+      toast("Reporte enviado", "ok");
+      $("#emailModal").removeClass("open");
+    } catch (corsError){
+      // El reintento no-cors se envía a ciegas: la respuesta es opaca y NO
+      // podemos confirmar la entrega. Antes esto decía "enviado" siempre.
+      console.warn("Intento normal falló, reintentando en no-cors.", corsError);
+      await fetch(POWER_AUTOMATE_REPORT_URL, {
+        method:"POST", mode:"no-cors", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload)
+      });
+      toast("Solicitud enviada, pero no se pudo confirmar. Revisa el historial del flujo en Power Automate.");
+      $("#emailModal").removeClass("open");
+    }
+  } catch (e){
+    console.error(e);
+    toast("No se pudo enviar el reporte: " + e.message, "err");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Enviar reporte";
+  }
+});
+
+/* ============================================================
+   FECHA DE OUTPUT + RELOJ
+   ============================================================ */
+function setAyer(){
+  const d = new Date();
+  d.setDate(d.getDate() - (d.getDay() === 1 ? 2 : 1));   // el lunes muestra el sábado
+  $("#fechaTexto").text(
+    `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`
+  );
+}
+function pintarUltimaActualizacion(){
+  if (lastUpdateISO) $("#lastUpdate").text("Actualizado " + tiempoRelativo(lastUpdateISO));
+}
+
+let diaActual = hoyISO();
+setAyer();
+setInterval(() => {
+  pintarUltimaActualizacion();
+  const h = hoyISO();
+  if (h !== diaActual){        // si el tablero queda abierto y pasa la medianoche, recalcula overdue
+    diaActual = h;
+    setAyer();
+    renderTable(currentPlanData);
+  }
+}, 60000);
 </script>
 </body>
 </html>
